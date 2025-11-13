@@ -2,7 +2,7 @@
 # Roadmap — Yii2 Task Manager (Checklist)
 
 ## Milestone 0 — Chuẩn Bị
-- [ ] Tạo GitHub repository và push commit đầu tiên
+- [x] Tạo GitHub repository và push commit đầu tiên
 - [ ] Tạo file `.env.example`
 - [ ] Tạo cấu trúc project hoặc copy skeleton
 - [ ] Cài Docker & Docker Compose
