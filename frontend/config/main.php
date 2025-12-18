@@ -33,6 +33,7 @@ $config = [
                 ],
             ],
         ],
+        
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
