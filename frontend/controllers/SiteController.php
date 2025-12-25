@@ -76,9 +76,9 @@ class SiteController extends Controller
     public function actionIndex()
     {
         // Yii::$app->redis->set('hello', 'worlda');
-        Yii::$app->redis->remove('hello');
-        echo Yii::$app->redis->get('hello');
-        die();
+        // Yii::$app->redis->remove('hello');
+        // echo Yii::$app->redis->get('hello');
+        // die();
         return $this->render('index');
     }
 
