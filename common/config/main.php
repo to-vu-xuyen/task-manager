@@ -15,5 +15,6 @@ return [
             'port' => 6379,
             'database' => 0,
         ],
+        'db' => require __DIR__ . '/db.php',
     ],
 ];
