@@ -7,8 +7,8 @@ return [
         getenv('DB_HOST'),
         getenv('DB_DATABASE')
     ),
-    'username' => getenv('DB_USER'),
-    'password' => getenv('DB_PASS'),
+    'username' => getenv('DB_USERNAME'),
+    'password' => getenv('DB_PASSWORD'),
     'charset' => 'utf8mb4',
     'tablePrefix' => 'tm_',
     'enableSchemaCache' => YII_ENV_PROD,

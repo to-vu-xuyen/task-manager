@@ -78,7 +78,7 @@ class SiteController extends Controller
         // Yii::$app->redis->set('hello', 'worlda');
         // Yii::$app->redis->remove('hello');
         // echo Yii::$app->redis->get('hello');
-        var_dump(YII_ENV_PROD );
+        var_dump(file_exists(__DIR__ . '/../../common/config/db.php'));
         die();
         return $this->render('index');
     }
