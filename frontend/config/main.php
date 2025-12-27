@@ -13,6 +13,7 @@ $config = [
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
+            'baseUrl' => '',
             'csrfParam' => '_csrf-frontend',
         ],
         'user' => [
@@ -39,12 +40,15 @@ $config = [
         ],
 
         'urlManager' => [
+            // 'scriptUrl' => '/index.php',
+
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-
+                
             ],
         ],
+
 
     ],
     'params' => $params,

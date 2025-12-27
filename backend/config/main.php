@@ -16,8 +16,10 @@ return [
             'class' => 'backend\modules\admin\Module', 
         ], 
     ],
+    // 'homeUrl' => '/task-manager/admin',
     'components' => [
         'request' => [
+            // 'baseUrl' => '/task-manager/admin',
             'csrfParam' => '_csrf-backend',
         ],
         'user' => [
@@ -42,16 +44,14 @@ return [
             'errorAction' => 'site/error',
         ],
         
-        /*
 
         'urlManager' => [
+            'baseUrl' => '/task-manager/admin',
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-
-        */
     ],
     'params' => $params,
 ];

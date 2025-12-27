@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /task-manager/
+
+# ===== Backend =====
+RewriteRule ^admin(/.*)?$ backend/web/index.php [L,QSA]
+
+# ===== Frontend =====
+RewriteRule ^$ frontend/web/index.php [L,QSA]
+RewriteRule ^(.*)$ frontend/web/index.php [L,QSA]
