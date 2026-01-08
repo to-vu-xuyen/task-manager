@@ -16,7 +16,6 @@ class UserCreateForm extends Model
             [['username', 'email', 'password'], 'required'],
             ['email', 'email'],
             ['password', 'string', 'min' => 6],
-            ['role', 'in', 'range' => ['admin', 'editor', 'user']],
         ];
     }
 }

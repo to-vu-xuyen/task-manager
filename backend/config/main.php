@@ -19,7 +19,7 @@ return [
     // 'homeUrl' => '/task-manager/admin',
     'components' => [
         'request' => [
-            // 'baseUrl' => '/task-manager/admin',
+            'baseUrl' => '/task-manager/admin',
             'csrfParam' => '_csrf-backend',
         ],
         'user' => [

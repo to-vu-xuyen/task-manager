@@ -13,7 +13,7 @@ $config = [
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
-            'baseUrl' => '',
+            'baseUrl' => '/task-manager',
             'csrfParam' => '_csrf-frontend',
         ],
         'user' => [

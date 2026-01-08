@@ -8,6 +8,11 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use common\models\User;
+use common\forms\user\UserCreateForm;
+// use common\services\user\UserService;
+use common\services\user\CreateByAdmin;
+
 
 /**
  * Site controller
@@ -24,7 +29,7 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['login', 'first-time', 'error'],
                         'allow' => true,
                     ],
                     [
@@ -76,6 +81,10 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
+        if(empty(Yii::$app->authManager->getUserIdsByRole('admin'))){
+            return $this->redirect(['site/first-time']);
+        }
+
         $this->layout = 'blank';
 
         $model = new LoginForm();
@@ -101,4 +110,21 @@ class SiteController extends Controller
 
         return $this->goHome();
     }
+
+
+    public function actionFirstTime(){
+        $form = new UserCreateForm();
+        $form->username = 'admin';
+
+
+        if($form->load(Yii::$app->request->post()) && $form->validate()){
+            $user = new CreateByAdmin($form);
+            $user = $user->create($form);
+        }
+
+        return $this->render('first-time',[
+            'model' => $form,
+        ]);
+    }
+
 }
