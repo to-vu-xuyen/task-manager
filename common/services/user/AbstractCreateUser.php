@@ -30,6 +30,7 @@ abstract class AbstractCreateUser
         if (!$this->user->save()) {
             throw new \RuntimeException('Cannot save user');
         }
+        $this->assignRole();
         $this->afterSave();
 
         return $this->user;
@@ -46,4 +47,5 @@ abstract class AbstractCreateUser
     protected function beforeSave(): void{}
     protected function afterSave(): void{}
 
+    abstract protected function assignRole(): void;
 }

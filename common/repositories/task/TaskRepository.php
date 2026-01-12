@@ -2,11 +2,15 @@
 
 namespace common\repositories\task;
 
+use Yii;
+use yii\db\Exception;
 use common\models\Task;
 use common\repositories\task\interfaces\TaskRepositoryInterface;
-use yii\db\Exception;
 
 class SqlTaskRepository implements TaskRepositoryInterface{
+
+    private int $cache_duration = 300;
+    private string $cacheKeyPrefix = null;
 
     public function get(int $id): Task
     {
@@ -26,7 +30,7 @@ class SqlTaskRepository implements TaskRepositoryInterface{
     }*/
     
     public function findByUser(int $userId, array $scopes = ['status' => 'active']): array{
-    	
+
         $query = Task::find()->where(['user_id' => $userId]);
         
         if (isset($scopes['status'])) {
