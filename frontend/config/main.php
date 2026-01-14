@@ -49,6 +49,18 @@ $config = [
             ],
         ],
 
+        'container' => [
+            'definitions' => [
+                'common\services\user\AuthService' => [
+                    'class' => 'common\services\user\AuthService',
+                    '__construct()' => ['common\services\user\CreateByUser'], // auto inject
+                ],
+                /*\common\services\user\AuthService::class => [
+                    'class' => \common\services\user\AuthService::class,
+                    '__construct()' => [\common\services\user\CreateByUser::class], // auto inject
+                ],*/
+            ],
+        ],
 
     ],
     'params' => $params,
