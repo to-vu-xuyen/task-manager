@@ -14,9 +14,14 @@ use common\services\user\AuthServiceInterface;
 class AuthController extends Controller{
 	private AuthServiceInterface $authService;
 
-	public function __construct(AuthServiceInterface $authService){
-		$this->authService = $authService;
-	}
+	// public function __construct(AuthServiceInterface $authService){
+	// 	$this->authService = $authService;
+	// }
+    public function __construct($id, $module, AuthServiceInterface $authService, $config = [])
+    {
+        $this->authService = $authService;  // DI tự inject
+        parent::__construct($id, $module, $config);
+    }
 
 	public function actionIndex(){
 		return $this->redirect(['auth/login']);

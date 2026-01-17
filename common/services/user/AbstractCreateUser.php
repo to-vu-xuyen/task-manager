@@ -37,7 +37,6 @@ abstract class AbstractCreateUser
     }
 
     private function loadData(): void{
-            // var_dump($this->user);die();
         $this->user->username = $this->form->username;
         $this->user->email = $this->form->email;
         $this->user->setPassword($this->form->password);

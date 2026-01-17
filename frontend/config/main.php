@@ -49,20 +49,28 @@ $config = [
             ],
         ],
 
+    ],
+
         'container' => [
+            // 'definitions' => [
+            //     'common\services\user\AuthService' => [
+            //         'class' => 'common\services\user\AuthService',
+            //         '__construct()' => [
+            //              \yii\di\Instance::of(\common\services\user\CreateByUser::class)
+            //         ],
+            //     ],
+            //     \common\services\user\AuthServiceInterface::class => \common\services\user\AuthService::class,
+            // ],
+            
             'definitions' => [
-                'common\services\user\AuthService' => [
-                    'class' => 'common\services\user\AuthService',
-                    '__construct()' => ['common\services\user\CreateByUser'], // auto inject
-                ],
-                /*\common\services\user\AuthService::class => [
+                \common\services\user\AuthServiceInterface::class => [
                     'class' => \common\services\user\AuthService::class,
-                    '__construct()' => [\common\services\user\CreateByUser::class], // auto inject
-                ],*/
+                    '__construct()' => [
+                        \yii\di\Instance::of(\common\services\user\CreateByUser::class)
+                    ],
+                ],
             ],
         ],
-
-    ],
     'params' => $params,
 ];
 

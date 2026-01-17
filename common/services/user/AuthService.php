@@ -2,7 +2,6 @@
 
 namespace common\services\user;
 
-
 use common\services\user\CreateByUser;
 use common\forms\user\UserCreateForm;
 
