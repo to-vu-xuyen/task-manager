@@ -10,8 +10,8 @@ use yii\web\Controller;
 use yii\web\Response;
 use common\models\User;
 use common\forms\user\UserCreateForm;
-// use common\services\user\UserService;
-use common\services\user\CreateByAdmin;
+// NEW: Updated to new namespace
+use common\services\user\UserService;
 
 
 /**
@@ -115,11 +115,18 @@ class SiteController extends Controller
     public function actionFirstTime(){
         $form = new UserCreateForm();
         $form->username = 'admin';
+        $form->role = 'admin'; // Set role cho admin đầu tiên
 
 
         if($form->load(Yii::$app->request->post()) && $form->validate()){
-            $user = new CreateByAdmin($form);
-            $user = $user->create($form);
+            // NEW: Sử dụng UserService facade
+            $userService = new UserService();
+            $user = $userService->createUser($form, 'admin');
+            
+            if ($user) {
+                Yii::$app->user->login($user);
+                return $this->redirect(['site/index']);
+            }
         }
 
         return $this->render('first-time',[

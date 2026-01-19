@@ -52,22 +52,15 @@ $config = [
     ],
 
         'container' => [
-            // 'definitions' => [
-            //     'common\services\user\AuthService' => [
-            //         'class' => 'common\services\user\AuthService',
-            //         '__construct()' => [
-            //              \yii\di\Instance::of(\common\services\user\CreateByUser::class)
-            //         ],
-            //     ],
-            //     \common\services\user\AuthServiceInterface::class => \common\services\user\AuthService::class,
-            // ],
-            
+            // NEW: Updated DI definitions với namespaces mới
             'definitions' => [
-                \common\services\user\AuthServiceInterface::class => [
-                    'class' => \common\services\user\AuthService::class,
-                    '__construct()' => [
-                        \yii\di\Instance::of(\common\services\user\CreateByUser::class)
-                    ],
+                // AuthService - chỉ login/logout
+                \common\services\user\auth\AuthServiceInterface::class => [
+                    'class' => \common\services\user\auth\AuthService::class,
+                ],
+                // UserService - facade cho user operations
+                \common\services\user\UserServiceInterface::class => [
+                    'class' => \common\services\user\UserService::class,
                 ],
             ],
         ],
