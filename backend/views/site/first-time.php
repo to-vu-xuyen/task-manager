@@ -9,8 +9,8 @@ $this->title = 'Create Account';
 
 <?php $form = ActiveForm::begin([
     'id' => 'signup-form',
-    'enableClientValidation' => true,
-    'enableAjaxValidation' => false,
+    // 'enableClientValidation' => true,
+    // 'enableAjaxValidation' => false,
 ]); ?>
 
 <?= $form->field($model, 'username')->textInput([
@@ -20,6 +20,7 @@ $this->title = 'Create Account';
 <?= $form->field($model, 'email')->input('email') ?>
 
 <?= $form->field($model, 'password')->passwordInput() ?>
+<?= $form->field($model, 'password_confirm')->passwordInput() ?>
 
 <div class="form-group">
     <?= Html::submitButton('Create Account', [

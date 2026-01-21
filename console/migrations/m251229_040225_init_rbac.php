@@ -153,7 +153,7 @@ class m251229_040225_init_rbac extends Migration
     {
         echo "m251229_040225_init_rbac cannot be reverted.\n";
 
-        return false;
+        return true;
     }
 
     /*

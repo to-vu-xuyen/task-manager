@@ -2,6 +2,7 @@
 namespace common\forms\user;
 
 use yii\base\Model;
+use 
 
 class UserCreateForm extends Model
 {
@@ -18,7 +19,8 @@ class UserCreateForm extends Model
             ['email', 'email'],
             ['password', 'string', 'min' => 6],
             ['password_confirm', 'compare', 'compareAttribute' => 'password', 'skipOnEmpty' => false],
-            ['role', 'string'], // NEW: Validation cho role (optional field)
+            ['role', 'string'],
+            ['status', 'integer'],
         ];
     }
 }

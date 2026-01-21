@@ -2,28 +2,36 @@
 
 namespace backend\controllers;
 
-use common\models\LoginForm;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use common\forms\user\UserLoginForm;
 use common\models\User;
+use common\models\LoginForm;
 use common\forms\user\UserCreateForm;
-// NEW: Updated to new namespace
 use common\services\user\UserService;
+use common\services\user\UserServiceInterface;
+use common\services\user\auth\AuthService;
+use common\services\user\auth\AuthServiceInterface;
 
 
-/**
- * Site controller
- */
-class SiteController extends Controller
-{
+class SiteController extends Controller {
+    
+    private UserServiceInterface $userService;
+    private AuthServiceInterface $authService;
+    
+    public function __construct($id, $module, ?UserServiceInterface $userService = null, ?AuthServiceInterface $authService = null, $config = []) {
+        $this->userService = $userService ?? new UserService();
+        $this->authService = $authService ?? new AuthService();
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
-    {
+    public function behaviors() {
         return [
             'access' => [
                 'class' => AccessControl::class,
@@ -51,8 +59,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions()
-    {
+    public function actions() {
         return [
             'error' => [
                 'class' => \yii\web\ErrorAction::class,
@@ -62,33 +69,33 @@ class SiteController extends Controller
 
     /**
      * Displays homepage.
-     *
-     * @return string
      */
-    public function actionIndex()
-    {
+    public function actionIndex(): string {
         return $this->render('index');
     }
 
     /**
      * Login action.
-     *
-     * @return string|Response
      */
-    public function actionLogin()
-    {
+    public function actionLogin(): string|Response {
+
+        // $auth = Yii::$app->authManager;
+        // $role = $auth->getRole('admin'); 
+        // $auth->revoke($role, 1);
+
+
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
-        if(empty(Yii::$app->authManager->getUserIdsByRole('admin'))){
+        if ($this->isFirstTimeSetup()) {
             return $this->redirect(['site/first-time']);
         }
 
         $this->layout = 'blank';
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        $model = new UserLoginForm();
+        if ($model->load(Yii::$app->request->post()) && $this->authService->login($model)) {
             return $this->goBack();
         }
 
@@ -101,37 +108,44 @@ class SiteController extends Controller
 
     /**
      * Logout action.
-     *
-     * @return Response
      */
-    public function actionLogout()
-    {
+    public function actionLogout(): Response {
         Yii::$app->user->logout();
-
         return $this->goHome();
     }
 
-
-    public function actionFirstTime(){
+    /**
+     * Tạo user lần đầu tiên nếu chưa có admin.
+     */
+    public function actionFirstTime(): string|Response {
         $form = new UserCreateForm();
         $form->username = 'admin';
-        $form->role = 'admin'; // Set role cho admin đầu tiên
+        $form->role = 'admin';
+        $form->status = User::STATUS_ACTIVE;
 
-
-        if($form->load(Yii::$app->request->post()) && $form->validate()){
-            // NEW: Sử dụng UserService facade
-            $userService = new UserService();
-            $user = $userService->createUser($form, 'admin');
-            
-            if ($user) {
-                Yii::$app->user->login($user);
-                return $this->redirect(['site/index']);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $user = $this->userService->createUser($form, 'admin');
+                
+                if ($user) {
+                    Yii::$app->user->login($user);
+                    Yii::$app->session->setFlash('success', 'Tạo tài khoản admin thành công!');
+                    return $this->redirect(['site/index']);
+                }
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', 'Không thể tạo tài khoản: ' . $e->getMessage());
             }
         }
 
-        return $this->render('first-time',[
+        return $this->render('first-time', [
             'model' => $form,
         ]);
     }
-
+    
+    /**
+     * Check if this is first time setup (no admin exists).
+     */
+    private function isFirstTimeSetup(): bool {
+        return empty(Yii::$app->authManager->getUserIdsByRole('admin'));
+    }
 }

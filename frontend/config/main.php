@@ -51,19 +51,6 @@ $config = [
 
     ],
 
-        'container' => [
-            // NEW: Updated DI definitions với namespaces mới
-            'definitions' => [
-                // AuthService - chỉ login/logout
-                \common\services\user\auth\AuthServiceInterface::class => [
-                    'class' => \common\services\user\auth\AuthService::class,
-                ],
-                // UserService - facade cho user operations
-                \common\services\user\UserServiceInterface::class => [
-                    'class' => \common\services\user\UserService::class,
-                ],
-            ],
-        ],
     'params' => $params,
 ];
 

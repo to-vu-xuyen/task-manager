@@ -2,6 +2,7 @@
 namespace common\services\user\create;
 
 use Yii;
+use common\services\user\create\AbstractCreateUser;
 
 /**
  * CreateByUser - Tạo user khi tự đăng ký (Signup)

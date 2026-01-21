@@ -2,40 +2,32 @@
 namespace common\forms\user;
 
 use yii\base\Model;
-use common\models\user\User;
 
-class UserLoginForm extends Model{
+/**
+ * UserLoginForm - Form validate input cho login
+ * 
+ * Chỉ validate FORMAT (required, min length).
+ * Business logic (xác thực credentials) do AuthService xử lý.
+ */
+class UserLoginForm extends Model {
 
     public $username;
     public $password;
     public $rememberMe = true;
-	protected User $user;
 
-    public function rules(){
+    public function rules() {
         return [
-            [['username', 'email', 'password'], 'required'],
-            ['email', 'email'],
+            [['username', 'password'], 'required'],
             ['password', 'string', 'min' => 6],
-
-            ['password', 'validatePassword'],
+            ['rememberMe', 'boolean'],
         ];
     }
-
-
-
-    public function validatePassword($attribute, $params) {
-        $user = $this->getUser();
-        if (!$user || !$user->validatePassword($this->password)) {
-            $this->addError($attribute, 'Sai mật khẩu');
-        }
-    }
-
-
-    public function getUser(){
-        if ($this->user === null) {
-            $this->user = User::findByUsername($this->username);
-        }
-
-        return $this->user;
+    
+    public function attributeLabels() {
+        return [
+            'username' => 'Tên đăng nhập',
+            'password' => 'Mật khẩu',
+            'rememberMe' => 'Ghi nhớ đăng nhập',
+        ];
     }
 }

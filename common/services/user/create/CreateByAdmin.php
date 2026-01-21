@@ -2,7 +2,7 @@
 namespace common\services\user\create;
 
 use Yii;
-use common\services\user\AbstractCreateUser;
+use common\services\user\create\AbstractCreateUser;
 
 /**
  * CreateByAdmin - Tạo user bởi Admin

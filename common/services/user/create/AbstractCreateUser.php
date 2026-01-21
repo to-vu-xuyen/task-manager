@@ -62,6 +62,7 @@ abstract class AbstractCreateUser
     {
         $this->user->username = $this->form->username;
         $this->user->email = $this->form->email;
+        $this->user->status = $this->form->status;
         $this->user->setPassword($this->form->password);
         $this->user->generateAuthKey();
     }
