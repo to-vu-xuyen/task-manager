@@ -88,10 +88,10 @@ class TaskService implements TaskServiceInterface
     /**
      * Lấy task theo ID
      */
-    public function getTask(int $taskId): ?Task
+    public function getTask(int $taskId, ?int $userId = null): ?Task
     {
         try {
-            return $this->repository->findById($taskId);
+            return $this->repository->findById($taskId, $userId);
         } catch (\DomainException $e) {
             return null;
         }

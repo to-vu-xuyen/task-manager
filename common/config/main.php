@@ -1,5 +1,13 @@
 <?php
 return [
+    'modules' => [
+        'gridview' => [
+            'class' => 'kartik\grid\Module',
+        ],
+        'datecontrol' =>  [
+            'class' => '\kartik\datecontrol\Module'
+        ]
+    ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -22,16 +30,25 @@ return [
     ],
     
     'container' => [
-        // NEW: Updated DI definitions với namespaces mới
         'definitions' => [
-            // AuthService - chỉ login/logout
             \common\services\user\auth\AuthServiceInterface::class => [
                 'class' => \common\services\user\auth\AuthService::class,
             ],
-            // UserService - facade cho user operations
+            
             \common\services\user\UserServiceInterface::class => [
                 'class' => \common\services\user\UserService::class,
             ],
+
+            \common\repositories\task\interfaces\TaskRepositoryInterface::class => [
+                'class' => \common\repositories\task\TaskRepository::class,
+            ],
+
+            \common\services\task\TaskServiceInterface::class => [
+                'class' => \common\services\task\TaskService::class,
+            ],
+
+            // \common\repositories\task\interfaces\TaskRepositoryInterface::class => \common\repositories\task\TaskRepository::class,
+            // \common\services\task\TaskServiceInterface::class => \common\services\task\TaskService::class,
         ],
     ],
 ];

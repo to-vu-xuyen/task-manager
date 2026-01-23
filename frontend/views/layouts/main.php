@@ -10,6 +10,9 @@ use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 
+use kartik\icons\Icon;
+Icon::map($this, Icon::FAS);
+
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -36,7 +39,7 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
+        ['label' => 'Task', 'url' => ['/task/index']],
         ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
     if (Yii::$app->user->isGuest) {

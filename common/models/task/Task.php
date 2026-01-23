@@ -30,6 +30,12 @@ class Task extends \yii\db\ActiveRecord {
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_COMPLETED = 'completed';
     const STATUS_ARCHIVED = 'archived';
+    const STATUS_DELETED = 'deleted';
+    const STATUS_TRASH = 'trash';
+    const STATUS_DRAFT = 'draft';
+    const STATUS_PUBLIC = 'public';
+    const STATUS_PRIVATE = 'private';
+    const STATUS_CANCELLED = 'cancelled';
 
     /**
      * {@inheritdoc}

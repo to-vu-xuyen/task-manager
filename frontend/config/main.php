@@ -46,6 +46,8 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 
+                '<module>/<controller>/<action>/<id>' => '<module>/<controller>/<action>/<id>',
+                '<module>/<controller>/<action>' => '<module>/<controller>/<action>',
             ],
         ],
 

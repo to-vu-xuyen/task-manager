@@ -17,6 +17,7 @@ class TaskUpdateForm extends Model
     public $assignee_id;
     public $due_at;
     public $status;
+    public $user_id;
     
     /**
      * {@inheritdoc}
@@ -25,7 +26,7 @@ class TaskUpdateForm extends Model
     {
         return [
             [['title'], 'required'],
-            [['assignee_id'], 'integer'],
+            [['assignee_id', 'user_id'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['description'], 'string', 'max' => 255],
             [['content'], 'string'],
@@ -37,6 +38,7 @@ class TaskUpdateForm extends Model
                 Task::STATUS_COMPLETED,
             ]],
             [['assignee_id'], 'exist', 'skipOnEmpty' => true, 'targetClass' => User::class, 'targetAttribute' => ['assignee_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnEmpty' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
     
@@ -46,6 +48,7 @@ class TaskUpdateForm extends Model
     public function loadFromTask(Task $task): void
     {
         $this->title = $task->title;
+        $this->user_id = $task->user_id;
         $this->description = $task->description;
         $this->content = $task->content;
         $this->assignee_id = $task->assignee_id;
@@ -60,6 +63,7 @@ class TaskUpdateForm extends Model
     {
         return [
             'assignee_id' => 'Assignee',
+            'user_id' => 'User',
             'title' => 'Title',
             'description' => 'Description',
             'content' => 'Content',

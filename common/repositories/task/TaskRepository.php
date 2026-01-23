@@ -4,7 +4,10 @@ namespace common\repositories\task;
 
 use Yii;
 use common\models\task\Task;
+use common\repositories\BaseRepositoryInterface;
 use common\repositories\task\interfaces\TaskRepositoryInterface;
+use yii\data\ActiveDataProvider;
+use yii\data\DataProviderInterface;
 
 /**
  * TaskRepository - SQL implementation của TaskRepositoryInterface
@@ -20,9 +23,17 @@ class TaskRepository implements TaskRepositoryInterface
      * @return Task
      * @throws \DomainException nếu không tìm thấy
      */
-    public function findById(int $id): Task
+    public function findById(int $id, ?int $userId = null): Task
     {
-        $task = Task::findOne($id);
+        $task = Task::find()
+            ->where(['id' => $id]);
+        if($userId) {
+            $task->andWhere(['or',
+                ['user_id' => $userId],
+                ['assignee_id' => $userId],
+            ]);
+        }
+        $task = $task->one();
         if (!$task) {
             throw new \DomainException("Task not found: ID = {$id}");
         }
@@ -76,6 +87,54 @@ class TaskRepository implements TaskRepositoryInterface
             ->orderBy(['due_at' => SORT_ASC])
             ->limit(50)
             ->all();
+    }
+
+
+
+    public function search(array $filter = [], int $pageSize = 20): DataProviderInterface
+    {
+        $query = Task::find();
+        
+        $query->andFilterWhere(['id' => $filter['id'] ?? null]);
+        $query->andFilterWhere(['user_id' => $filter['user_id'] ?? null]);
+        $query->andFilterWhere(['assginee_id' => $filter['assginee_id'] ?? null]);
+        $query->andFilterWhere(['like', 'title', $filter['title'] ?? null]);
+        $query->andFilterWhere(['like', 'description', $filter['description'] ?? null]);
+        $query->andFilterWhere(['like', 'content', $filter['content'] ?? null]);
+        $query->andFilterWhere(['status' => $filter['status'] ?? null]);
+
+        // Check ngày tạo trong khoảng
+        if (!empty($filter['created_from'])) {
+            $query->andWhere(['>=', 'created_at', $filter['created_from'] . ' 00:00:00']);
+        }
+        if (!empty($filter['created_to'])) {
+            $query->andWhere(['<=', 'created_at', $filter['created_to'] . ' 23:59:59']);
+        }
+
+        // Check ngày hết hạn trong khoảng
+        if (!empty($filter['due_from'])) {
+            $query->andWhere(['>=', 'due_at', $filter['due_from']]);
+        }
+        if (!empty($filter['due_to'])) {
+            $query->andWhere(['<=', 'due_at', $filter['due_to'] . ' 23:59:59']);
+        }
+        
+        // Check ngày hết hạn so với hiện tại
+        if (!empty($filter['overdue']) && $filter['overdue']) {
+            $query->andWhere(['<', 'due_at', date('Y-m-d H:i:s')]);
+        }
+
+        return new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => $pageSize,
+            ],
+            'sort' => [
+                'defaultOrder' => ['created_at' => SORT_DESC],
+                'attributes' => ['id', 'title', 'status', 'created_at', 'due_at'],
+            ]
+
+        ]);
     }
     
     /**
