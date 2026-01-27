@@ -1,53 +1,66 @@
-# yii console commands
-
-/yii_test
-/yii_test.bat
-init
-init.bat
-yii.bat
-
-# phpstorm project files
+# ===== IDE & Editor =====
 .idea
-
-# netbeans project files
 nbproject
-
-.env
-
-# zend studio for eclipse project files
 .buildpath
 .project
 .settings
+*.swp
+*.swo
+.vscode
 
-# windows thumbnail cache
+# ===== OS Generated =====
+.DS_Store
 Thumbs.db
 
-# composer vendor dir
+# ===== Composer =====
 /vendor
-
-# composer itself is not needed
 composer.phar
-composer.lock
 
-# Mac DS_Store Files
-.DS_Store
+# ===== Environment =====
+.env
 
-# phpunit itself is not needed
-phpunit.phar
-# local phpunit config
-/phpunit.xml
+# ===== Runtime directories =====
+/frontend/runtime
+/backend/runtime
+/console/runtime
+/common/runtime
 
-# vagrant runtime
-/.vagrant
-
-# ignore generated files
-/frontend/web/assets
-/frontend/web/uploads
+# ===== Generated files by init script =====
 /frontend/web/index.php
 /frontend/web/index-test.php
 /frontend/web/robots.txt
-/backend/web/assets
-/backend/web/uploads
 /backend/web/index.php
 /backend/web/index-test.php
 /backend/web/robots.txt
+
+# ===== Local config files =====
+/frontend/config/main-local.php
+/frontend/config/params-local.php
+/backend/config/main-local.php
+/backend/config/params-local.php
+/console/config/main-local.php
+/console/config/params-local.php
+/common/config/main-local.php
+/common/config/params-local.php
+/common/config/test-local.php
+
+# ===== Assets & Uploads =====
+/frontend/web/assets
+/frontend/web/uploads
+/backend/web/assets
+/backend/web/uploads
+
+# ===== Testing =====
+phpunit.phar
+/phpunit.xml
+/tests/_output
+/codeception/_output/*
+!/codeception/_output/.gitignore
+
+# ===== Vagrant =====
+/.vagrant
+
+# ===== Node =====
+node_modules
+package-lock.json
+yarn.lock

@@ -15,13 +15,17 @@ class m260123_084909_create_activity_log_table extends Migration
         $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE=InnoDB';
         $this->createTable('{{%activity_log}}', [
             'id' => $this->integer()->notNull(),
-            'user_id' => $this->integer()->notNull(),
-            'action' => $this->string(50)->notNull(),
-            'target_type' => $this->string(50)->notNull(),
-            'target_id' => $this->integer()->notNull(),
-            'meta' => $this->json(),
+            'user_id' => $this->integer()->notNull(), // id of user who performed the action
+            'action' => $this->string(50)->notNull(), // action performed (e.g. "create", "update", "delete", etc.)
+            'target_type' => $this->string(50)->notNull(), // type of target (e.g. "task", "project", "user", etc.)
+            'target_id' => $this->integer()->notNull(), // id of target
+            'meta' => $this->json(), // additional metadata
+            'ip_address' => $this->string(255),
+            'user_agent' => $this->string(255),
+            'error_message' => $this->text(),
             'created_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
+
         $this->addPrimaryKey('pk-activity_log', '{{%activity_log}}', ['id', 'created_at']);
         $this->createIndex(
             '{{%idx-activity_log-user_id}}',
@@ -58,6 +62,11 @@ class m260123_084909_create_activity_log_table extends Migration
         $this->dropTable('{{%activity_log}}');
     }
 
+    /**
+     * Xây dựng câu lệnh SQL để tạo partition
+     * 
+     * @return string
+     */
     private function buildPartitionSql()
     {
         $partitions = [];

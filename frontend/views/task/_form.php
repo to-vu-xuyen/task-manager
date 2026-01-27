@@ -17,10 +17,10 @@ use common\models\User;
     <?php $form = ActiveForm::begin([
         'id' => 'task-form',
         'type' => ActiveForm::TYPE_HORIZONTAL,
-        'formConfig' => [
-            'labelSpan' => 3,
-            'deviceSize' => ActiveForm::SIZE_SMALL,
-        ],
+        // 'formConfig' => [
+        //     'labelSpan' => 3,
+        //     'deviceSize' => ActiveForm::SIZE_SMALL,
+        // ],
         'enableAjaxValidation' => false,
         'enableClientValidation' => true,
     ]); ?>
