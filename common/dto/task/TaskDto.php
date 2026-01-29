@@ -12,7 +12,7 @@ use common\models\task\Task;
  */
 class TaskDto
 {
-    public int $id;
+    public readonly int $id;
     public string $title;
     public ?string $description;
     public ?string $content;

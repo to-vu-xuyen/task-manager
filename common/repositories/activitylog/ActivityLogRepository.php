@@ -2,9 +2,12 @@
 
 namespace common\repositories\activitylog;
 
-use common\repositories\acitivylog\ActivityLogRepositoryInterface;
-use common\models\acitivylog\ActivityLog;
+use Yii;
+use common\dto\activitylog\ActivityLogDto;
+use common\repositories\activitylog\interface\ActivityLogRepositoryInterface;
+use common\models\activitylog\ActivityLog;
 use yii\data\ActiveDataProvider;
+use yii\data\DataProviderInterface;
 
 /**
  * 
@@ -16,8 +19,9 @@ class ActivityLogRepository implements ActivityLogRepositoryInterface
         return ActivityLog::find()->orderBy(['created_at' => SORT_DESC])->limit($limit)->all();
     }
 
-	public function findById(int $id): ActivityLog{
-		return ActivityLog::find()->where(['id' => $id])->one();
+	public function findById(int $id): ?ActivityLogDto{
+		$model = ActivityLog::find()->where(['id' => $id])->one();
+        return $model ? new ActivityLogDto($model) : null;
 	}
 
 	public function findByUserId(int $user_id, int $limit = 50): array{
@@ -35,7 +39,7 @@ class ActivityLogRepository implements ActivityLogRepositoryInterface
 
     public function findByAction(string $action, int $limit = 100): array{
 		$models = ActivityLog::find()
-			->where(['target_type' => $targetType, 'target_id' => $targetId])
+			->where(['action' => $action])
 			->limit($limit)
 			->all();
 		return $models;
@@ -43,7 +47,7 @@ class ActivityLogRepository implements ActivityLogRepositoryInterface
 
 	public function search(array $filter = [], int $pageSize = 20): DataProviderInterface
     {
-        $query = Task::find();
+        $query = ActivityLog::find();
         
         $query->andFilterWhere(['id' => $filter['id'] ?? null]);
         $query->andFilterWhere(['user_id' => $filter['user_id'] ?? null]);
@@ -81,7 +85,7 @@ class ActivityLogRepository implements ActivityLogRepositoryInterface
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if (!$log->validate()) {
-                throw new \DomainException('ActivityLog validation failed: ' . json_encode($task->errors));
+                throw new \DomainException('ActivityLog validation failed: ' . json_encode($log->errors));
             }
             
             if (!$log->save(false)) {

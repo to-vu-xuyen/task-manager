@@ -1,10 +1,11 @@
 <?php
 
-namespace common\models;
+namespace common\models\activitylog;
 
 use Yii;
 use common\models\User;
 use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%activity_log}}".
@@ -36,12 +37,15 @@ class ActivityLog extends ActiveRecord
     {
         return [
             [['meta'], 'default', 'value' => null],
-            [['user_id', 'action', 'target_type', 'target_id', 'created_at'], 'required'],
+            [['user_id', 'action', 'target_type', 'target_id'], 'required'],
             [['user_id', 'target_id'], 'integer'],
             [['meta', 'created_at'], 'safe'],
             [['action', 'target_type'], 'string', 'max' => 50],
             [['ip_address', 'user_agent'], 'string', 'max' => 255],
             [['error_message'], 'string'],
+
+            [['ip_address', 'user_agent', 'error_message'], 'filter', 'filter' => 'trim'],
+            [['ip_address', 'user_agent', 'error_message'], 'filter', 'filter' => 'strip_tags'],
         ];
     }
 

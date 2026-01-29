@@ -12,12 +12,16 @@ class ActivityLogCreateForm extends Model{
     public $target_type;
     public $target_id;
     public $meta;
+    public $ip_address;
+    public $user_agent;
+    public $error_message;
 
 
     public function rules() {
     	return [
     		[['user_id', 'action', 'target_type', 'target_id'], 'required'],
     		[['user_id', 'target_id'], 'integer'],
+            [['ip_address', 'user_agent', 'error_message'], 'string'],
     		[['meta'], 'safe'],
     		[['meta'], 'validateMeta'],
     	];
