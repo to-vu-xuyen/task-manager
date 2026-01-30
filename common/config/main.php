@@ -47,6 +47,15 @@ return [
                 'class' => \common\services\task\TaskService::class,
             ],
 
+            // \common\repositories\activitylog\interface\ActivityLogRepositoryInterface::class => [
+            //     'class' => \common\repositories\activitylog\CachedActivityLogRepository::class,
+            // ],
+
+            'common\repositories\activitylog\interface\ActivityLogRepositoryInterface' => function($container) {
+                $baseRepo = new \common\repositories\activitylog\ActivityLogRepository();
+                return new \common\repositories\activitylog\CachedActivityLogRepository($baseRepo);
+            },
+
             // \common\repositories\task\interfaces\TaskRepositoryInterface::class => \common\repositories\task\TaskRepository::class,
             // \common\services\task\TaskServiceInterface::class => \common\services\task\TaskService::class,
         ],
