@@ -7,14 +7,14 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use frontend\controllers\BaseController;
 use common\repositories\task\interfaces\TaskRepositoryInterface;
-use common\repositories\task\TaskRepository;
 use common\services\task\TaskServiceInterface;
-use common\services\task\TaskService;
 use common\forms\task\TaskCreateForm;
 use common\forms\task\TaskUpdateForm;
+use common\helpers\ActivityLogger;
 
-class TaskController extends Controller {
+class TaskController extends BaseController {
     private TaskRepositoryInterface $taskRepository;
     private TaskServiceInterface $taskService;
 
@@ -35,23 +35,14 @@ class TaskController extends Controller {
      */
     public function behaviors()
     {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'], // Chỉ cho phép user đã đăng nhập
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
+        $behaviors = parent::behaviors();
+        $behaviors['verbs'] = [
+            'class' => VerbFilter::class,
+            'actions' => [
+                'delete' => ['POST'],
             ],
         ];
+        return $behaviors;
     }
 
     public function actionIndex() {
@@ -92,6 +83,7 @@ class TaskController extends Controller {
         $model->user_id = Yii::$app->user->id;
         $model->loadFromTask($task);
 
+        $this->activityLogger->log(['message' => 'User update task', 'action' => 'update', 'targetType' => 'task', 'targetId' => $id]);
         if ($model->load(Yii::$app->request->post())) {
             $task = $this->taskService->updateTask($model);
             

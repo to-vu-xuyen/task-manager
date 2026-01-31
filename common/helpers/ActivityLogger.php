@@ -20,8 +20,19 @@ class ActivityLogger
     //     return Yii::$app->get('activityLogger');
     // }
 
-    public function log(string $action, string $targetType, int $targetId, array $meta = null)
+    public function log(?array $meta = null, ?string $action = null, ?string $targetType = null, ?int $targetId = null): void
     {
+        if(empty($targetType)) {
+            $targetType = Yii::$app->controller->id ?? "unknown";
+        }
+        if(empty($action)) {
+            $action = Yii::$app->controller->action->id ?? "unknown";
+        }
+
+        if(empty($targetId)) {
+            $targetId = 0;
+        }
+        
         $form = new ActivityLogCreateForm([
             'user_id' => Yii::$app->user->id,
             'action' => $action,
@@ -34,8 +45,11 @@ class ActivityLogger
             $form->ip_address = Yii::$app->request->userIP;
             $form->user_agent = Yii::$app->request->userAgent;
         }
-
-        $this->service->create($form);
+        try {
+            $this->service->create($form);
+        } catch (\Exception $e) {
+            Yii::error($e->getMessage(), 'activitylog');
+        }
     }
     
 
