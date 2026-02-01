@@ -2,7 +2,6 @@
 namespace common\forms\user;
 
 use yii\base\Model;
-use 
 
 class UserCreateForm extends Model
 {
