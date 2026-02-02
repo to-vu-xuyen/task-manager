@@ -27,36 +27,37 @@ return [
             'database' => 0,
         ],
         'db' => require __DIR__ . '/db.php',
-    ],
+            
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/error/' . date('Y-m-d') . '.log',
+                    'maxFileSize' => 10240,
+                    'maxLogFiles' => 60,
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'logFile' => '@runtime/logs/info/' . date('Y-m-d') . '.log',
+                    'maxFileSize' => 10240,
+                    'maxLogFiles' => 60,
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning', 'info'],
+                    'logFile' => '@runtime/logs/activitylog/' . date('Y-m-d') . '.log',
+                    'categories' => ['activitylog'],
+                    'maxFileSize' => 10240, // 10MB
+                    'maxLogFiles' => 60, // Tối đa 60 Files
+                ],
 
-    'log' => [
-        'traceLevel' => YII_DEBUG ? 3 : 0,
-        'targets' => [
-            [
-                'class' => 'yii\log\FileTarget',
-                'levels' => ['error', 'warning'],
-                'logFile' => '@runtime/logs/error/' . date('Y-m-d') . '.log',
-                'maxFileSize' => 10240,
-                'maxLogFiles' => 60,
             ],
-            [
-                'class' => 'yii\log\FileTarget',
-                'levels' => ['info'],
-                'logFile' => '@runtime/logs/info/' . date('Y-m-d') . '.log',
-                'maxFileSize' => 10240,
-                'maxLogFiles' => 60,
-            ],
-            [
-                'class' => 'yii\log\FileTarget',
-                'levels' => ['error', 'warning', 'info'],
-                'logFile' => '@runtime/logs/activitylog/' . date('Y-m-d') . '.log',
-                'categories' => ['activitylog'],
-                'maxFileSize' => 10240, // 10MB
-                'maxLogFiles' => 60, // Tối đa 60 Files
-            ],
-
         ],
     ],
+
     
     'container' => [
         'definitions' => [

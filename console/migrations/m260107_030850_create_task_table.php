@@ -20,7 +20,7 @@ class m260107_030850_create_task_table extends Migration
             'title' => $this->string()->notNull(),
             'description' => $this->string(),
             'content' => $this->text(),
-            'status' => $this->string(20)->notNull()->defaultValue(Task::STATUS_ACTIVE),
+            'status' => $this->string(20)->notNull()->defaultValue('pending'),
             'created_at' => $this->datetime()->notNull(),
             'updated_at' => $this->datetime(),
             'deleted_at' => $this->datetime(),
