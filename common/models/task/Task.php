@@ -25,17 +25,16 @@ use common\models\User;
  */
 class Task extends \yii\db\ActiveRecord {
 
-    const STATUS_PENDING = 'pending';
-    const STATUS_ACTIVE = 'active';
-    const STATUS_IN_PROGRESS = 'in_progress';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_ARCHIVED = 'archived';
-    const STATUS_DELETED = 'deleted';
-    const STATUS_TRASH = 'trash';
-    const STATUS_DRAFT = 'draft';
-    const STATUS_PUBLIC = 'public';
-    const STATUS_PRIVATE = 'private';
-    const STATUS_CANCELLED = 'cancelled';
+    const STATUS_PENDING = 'pending'; // Đang chờ
+    const STATUS_ACTIVE = 'active'; // Đang hoạt động
+    const STATUS_IN_PROGRESS = 'in_progress'; // Đang giải quyết
+    const STATUS_COMPLETED = 'completed'; // Đã hoàn thành
+    const STATUS_ARCHIVED = 'archived'; // Lưu trữ hiển thị nhưng không làm gì
+    const STATUS_DELETED = 'deleted'; // Soft Delete
+    const STATUS_DRAFT = 'draft'; // Nháp
+    // const STATUS_PUBLIC = 'public'; // Công khai
+    // const STATUS_PRIVATE = 'private'; // Riêng tư
+    const STATUS_CANCELLED = 'cancelled'; // Đã hủy
 
     /**
      * {@inheritdoc}
@@ -62,6 +61,11 @@ class Task extends \yii\db\ActiveRecord {
                 self::STATUS_IN_PROGRESS,
                 self::STATUS_COMPLETED,
                 self::STATUS_ARCHIVED,
+                self::STATUS_DELETED,
+                self::STATUS_DRAFT,
+                // self::STATUS_PUBLIC,
+                // self::STATUS_PRIVATE,
+                self::STATUS_CANCELLED,
             ]],
             [['assignee_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['assignee_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
@@ -109,9 +113,19 @@ class Task extends \yii\db\ActiveRecord {
      * Check if task is overdue
      */
     public function isOverdue(): bool{
-        if (!$this->due_at) {
+        if (!$this->due_at || empty($this->due_at)) {
             return false;
         }
         return strtotime($this->due_at) < time() && $this->status !== self::STATUS_COMPLETED;
+    }
+
+    public function softDelete(): bool{
+        $this->status = self::STATUS_DELETED;
+        $this->deleted_at = date('Y-m-d H:i:s');
+        return $this->save();
+    }
+
+    public function isCompleted(): bool{
+        return $this->status === self::STATUS_COMPLETED;
     }
 }

@@ -163,7 +163,7 @@ class TaskRepository implements TaskRepositoryInterface
     }
     
     /**
-     * Xóa task (soft delete - chuyển status sang ARCHIVED)
+     * Xóa task (soft delete - chuyển status sang DELETED)
      */
     public function delete(Task $task): void
     {
@@ -173,7 +173,7 @@ class TaskRepository implements TaskRepositoryInterface
         
         $transaction = Yii::$app->db->beginTransaction();
         try {
-            $task->status = Task::STATUS_ARCHIVED;
+            $task->status = Task::STATUS_DELETED;
             $task->deleted_at = date('Y-m-d H:i:s');
             $task->save(false);
             

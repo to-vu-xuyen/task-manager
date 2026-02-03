@@ -27,23 +27,27 @@ class TaskService implements TaskServiceInterface
     /**
      * Tạo task mới
      */
-    public function createTask(TaskCreateForm $form): ?Task
+    public function create(TaskCreateForm $form): ?Task
     {
         if (!$form->validate()) {
             return null;
         }
         
         $task = new Task();
-        $task->user_id = $form->user_id;
-        $task->assignee_id = $form->assignee_id;
-        $task->title = $form->title;
-        $task->description = $form->description;
-        $task->content = $form->content;
-        $task->due_at = $form->due_at;
+        $task->setAttributes($form->toArray());
+        // $task->user_id = $form->user_id;
+        // $task->assignee_id = $form->assignee_id;
+        // $task->title = $form->title;
+        // $task->description = $form->description;
+        // $task->content = $form->content;
+        // $task->due_at = $form->due_at;
         $task->status = Task::STATUS_PENDING;
         $task->created_at = date('Y-m-d H:i:s');
         
         $this->repository->save($task);
+        
+        var_dump($task);
+        die();
         
         return $task;
     }
@@ -51,7 +55,7 @@ class TaskService implements TaskServiceInterface
     /**
      * Cập nhật task
      */
-    public function updateTask(int $taskId, TaskUpdateForm $form): ?Task
+    public function update(int $taskId, TaskUpdateForm $form): ?Task
     {
         if (!$form->validate()) {
             return null;
@@ -74,7 +78,7 @@ class TaskService implements TaskServiceInterface
     /**
      * Xóa task (soft delete)
      */
-    public function deleteTask(int $taskId): bool
+    public function delete(int $taskId): bool
     {
         try {
             $task = $this->repository->findById($taskId);
@@ -88,7 +92,7 @@ class TaskService implements TaskServiceInterface
     /**
      * Lấy task theo ID
      */
-    public function getTask(int $taskId, ?int $userId = null): ?Task
+    public function getById(int $taskId, ?int $userId = null): ?Task
     {
         try {
             return $this->repository->findById($taskId, $userId);
@@ -100,7 +104,7 @@ class TaskService implements TaskServiceInterface
     /**
      * Lấy tất cả tasks của user (creator)
      */
-    public function getTasksByUser(int $userId): array
+    public function getByUserId(int $userId): array
     {
         return $this->repository->findByUserId($userId);
     }
@@ -108,7 +112,7 @@ class TaskService implements TaskServiceInterface
     /**
      * Lấy tasks được assign cho user
      */
-    public function getTasksByAssignee(int $assigneeId): array
+    public function getByAssignee(int $assigneeId): array
     {
         return $this->repository->findByAssigneeId($assigneeId);
     }

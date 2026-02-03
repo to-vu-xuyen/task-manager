@@ -14,32 +14,32 @@ interface TaskServiceInterface
     /**
      * Tạo task mới
      */
-    public function createTask(TaskCreateForm $form): ?Task;
+    public function create(TaskCreateForm $form): ?Task;
     
     /**
      * Cập nhật task
      */
-    public function updateTask(int $taskId, TaskUpdateForm $form): ?Task;
+    public function update(int $taskId, TaskUpdateForm $form): ?Task;
     
     /**
      * Xóa task (soft delete)
      */
-    public function deleteTask(int $taskId): bool;
+    public function delete(int $taskId): bool;
     
     /**
      * Lấy task theo ID
      */
-    public function getTask(int $taskId): ?Task;
+    public function getById(int $taskId): ?Task;
     
     /**
      * Lấy tất cả tasks của user
      */
-    public function getTasksByUser(int $userId): array;
+    public function getByUserId(int $userId): array;
     
     /**
      * Lấy tasks được assign cho user
      */
-    public function getTasksByAssignee(int $assigneeId): array;
+    public function getByAssignee(int $assigneeId): array;
     
     /**
      * Đổi status của task
