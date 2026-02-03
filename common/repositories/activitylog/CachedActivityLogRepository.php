@@ -2,8 +2,11 @@
 
 namespace common\repositories\activitylog;
 
+use common\models\activitylog\ActivityLog;
 use common\repositories\activitylog\interface\ActivityLogRepositoryInterface;
 use yii\caching\TagDependency;
+use yii\base\InvalidConfigException;
+use yii\data\DataProviderInterface;
 
 class CachedActivityLogRepository implements ActivityLogRepositoryInterface
 {
@@ -28,7 +31,7 @@ class CachedActivityLogRepository implements ActivityLogRepositoryInterface
         }, $this->duration, new TagDependency(['tags' => [self::TAG_ALL]]));
     }
 
-    public function findById($id): ?ActivityLogDto
+    public function findById(int $id): ?ActivityLog
     {
         $cacheKey = self::TAG_ALL . ':id:' . $id;
         return Yii::$app->cache->getOrSet($cacheKey, function () use ($id) {

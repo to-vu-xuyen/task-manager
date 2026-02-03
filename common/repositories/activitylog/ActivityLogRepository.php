@@ -19,9 +19,9 @@ class ActivityLogRepository implements ActivityLogRepositoryInterface
         return ActivityLog::find()->orderBy(['created_at' => SORT_DESC])->limit($limit)->all();
     }
 
-	public function findById(int $id): ?ActivityLogDto{
+	public function findById(int $id): ?ActivityLog{
 		$model = ActivityLog::find()->where(['id' => $id])->one();
-        return $model ? new ActivityLogDto($model) : null;
+        return $model;
 	}
 
 	public function findByUserId(int $user_id, int $limit = 50): array{

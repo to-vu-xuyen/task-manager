@@ -49,6 +49,9 @@ class ActivityLogDto
 
     public static function collection(array $models): array
     {
+        // array_map(function($m){
+        //     return new self($m);
+        // }, $models);
         return array_map(fn($m) => new self($m), $models);
     }
 }

@@ -17,7 +17,7 @@ class ActivityLogService implements ActivityLogServiceInterface
 		$this->activityLogRepository = $activityLogRepository;
 	}
 
-    public function create(ActivityLogCreateForm $form): ?ActivityLogDto
+    public function create(ActivityLogCreateForm $form): ?ActivityLog
     {
         
         if (!$form->validate()) {
@@ -43,7 +43,7 @@ class ActivityLogService implements ActivityLogServiceInterface
         return $this->activityLogRepository->getNewest(20);
     }
 
-    public function getById($id): ?ActivityLogDto
+    public function getById($id): ?ActivityLog
     {
         return $this->activityLogRepository->findById($id);
     }
