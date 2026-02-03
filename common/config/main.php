@@ -82,7 +82,7 @@ return [
                 return new \common\repositories\activitylog\CachedActivityLogRepository($baseRepo);
             },
 
-            \common\services\activitylog\interface\ActivityLogServiceInterface::class => [
+            \common\services\activitylog\ActivityLogServiceInterface::class => [
                 'class' => \common\services\activitylog\ActivityLogService::class,
             ],
 
