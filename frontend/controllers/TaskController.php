@@ -59,7 +59,7 @@ class TaskController extends BaseController {
         $model->user_id = Yii::$app->user->id;
 
         if ($model->load(Yii::$app->request->post())) {
-            $task = $this->taskService->createTask($model);
+            $task = $this->taskService->create($model);
             
             if ($task !== null) {
                 Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
@@ -85,7 +85,7 @@ class TaskController extends BaseController {
 
         $this->activityLogger->log(['message' => 'User update task', 'action' => 'update', 'targetType' => 'task', 'targetId' => $id]);
         if ($model->load(Yii::$app->request->post())) {
-            $task = $this->taskService->updateTask($model);
+            $task = $this->taskService->update($id, $model);
             
             if ($task !== null) {
                 Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
