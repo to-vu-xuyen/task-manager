@@ -96,26 +96,26 @@ class TaskTest extends Unit
 
     public function testSaveTask()
     {
-        $taskDto = new TaskCreateForm();
-        $taskDto->title = 'New Task 1';
-        $taskDto->description = 'New Description 1';
-        $taskDto->content = 'New Content 1';
-        // $taskDto->status = Task::STATUS_PENDING;
-        $taskDto->due_at = '2028-01-01';
-        $taskDto->user_id = 1;
-        $taskDto->assignee_id = 1;
+        $form = new TaskCreateForm();
+        $form->title = 'New Task 1';
+        $form->description = 'New Description 1';
+        $form->content = 'New Content 1';
+        // $form->status = Task::STATUS_PENDING;
+        $form->due_at = '2028-01-01 00:00:00';
+        $form->user_id = 1;
+        $form->assignee_id = 1;
 
         $service = Yii::$container->get(TaskServiceInterface::class);
-        $result = $service->create($taskDto);
+        $result = $service->create($form);
         
         $this->assertInstanceOf(Task::class, $result);
-        $this->assertEquals($taskDto->title, $result->title);
-        $this->assertEquals($taskDto->description, $result->description);
-        $this->assertEquals($taskDto->content, $result->content);
-        $this->assertEquals($taskDto->status, $result->status);
-        $this->assertEquals($taskDto->due_at, $result->due_at);
-        $this->assertEquals($taskDto->user_id, $result->user_id);
-        $this->assertEquals($taskDto->assignee_id, $result->assignee_id);
+        $this->assertEquals($form->title, $result->title);
+        $this->assertEquals($form->description, $result->description);
+        $this->assertEquals($form->content, $result->content);
+        $this->assertEquals(Task::STATUS_PENDING, $result->status);
+        $this->assertEquals($form->due_at, $result->due_at);
+        $this->assertEquals($form->user_id, $result->user_id);
+        $this->assertEquals($form->assignee_id, $result->assignee_id);
 
     }
 

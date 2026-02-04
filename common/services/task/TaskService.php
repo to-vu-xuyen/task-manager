@@ -46,9 +46,6 @@ class TaskService implements TaskServiceInterface
         
         $this->repository->save($task);
         
-        var_dump($task);
-        die();
-        
         return $task;
     }
     

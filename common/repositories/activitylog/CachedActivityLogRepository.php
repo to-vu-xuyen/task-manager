@@ -5,7 +5,6 @@ namespace common\repositories\activitylog;
 use common\models\activitylog\ActivityLog;
 use common\repositories\activitylog\interface\ActivityLogRepositoryInterface;
 use yii\caching\TagDependency;
-use yii\base\InvalidConfigException;
 use yii\data\DataProviderInterface;
 
 class CachedActivityLogRepository implements ActivityLogRepositoryInterface
