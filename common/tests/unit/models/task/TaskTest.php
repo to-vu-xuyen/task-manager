@@ -25,25 +25,38 @@ class TaskTest extends Unit
         ];
     }
 
-    public function testGetTaskByFixturesKey()
-    {
-        $taskData = $this->tester->grabFixture('tasks', 'task_pending_1');
-
-        // $this->assertEquals('Task 1', $taskData['title']);
-        $this->assertEquals($taskData['title'], $taskData['title']);
-    }
-
     public function testIsOverDue()
     {
         $taskOverDue = $this->tester->grabFixture('tasks', 'task_overdue_1');
         // $overdueTask = Task::findOne($task['id']);
         $this->assertTrue($taskOverDue->isOverdue());
     }
+    public function testIsOverdueWithNullDueDate()
+    {
+        $taskPending = $this->tester->grabFixture('tasks', 'task_pending_1');
+        $taskPending->due_at = null;
+        $this->assertFalse($taskPending->isOverdue());
+    }
 
     public function testIsNotOverDue()
     {
         $taskPending = $this->tester->grabFixture('tasks', 'task_pending_1');
         $this->assertFalse($taskPending->isOverdue());
+    }
+
+    public function testIsOverdueWhenCompleted()
+    {
+        $taskCompleted = $this->tester->grabFixture('tasks', 'task_completed_1');
+        $this->assertFalse($taskCompleted->isOverdue());
+    }
+
+    public function testValidationStatusInRange()
+    {
+        // Work in progress
+        $task = new Task();
+        $task->status = 4;
+        $this->assertFalse($task->validate());
+        $this->assertArrayHasKey('status', $task->getErrors());
     }
 
     public function testIsCompleted()
@@ -66,14 +79,16 @@ class TaskTest extends Unit
         $this->assertArrayHasKey('user_id', $task->getErrors());
     }
 
-    public function testSoftDelete(){
+    public function testSoftDelete()
+    {
         $task = $this->tester->grabFixture('tasks', 'task_pending_1');
         $task->softDelete();
         $this->assertNotNull($task->deleted_at);
         $this->assertEquals(Task::STATUS_DELETED, $task->status);
     }
 
-    public function testServiceSoftDelete(){
+    public function testServiceSoftDelete()
+    {
         $task = $this->tester->grabFixture('tasks', 'task_pending_1');
         $service = Yii::$container->get(TaskServiceInterface::class);
         $service->delete($task->id);
@@ -82,7 +97,8 @@ class TaskTest extends Unit
         $this->assertEquals(Task::STATUS_DELETED, $task->status);
     }
 
-    public function testIsSoftDelete(){
+    public function testIsSoftDelete()
+    {
         $task = $this->tester->grabFixture('tasks', 'task_deleted_1');
         $this->assertNotNull($task->deleted_at);
         $this->assertEquals(Task::STATUS_DELETED, $task->status);
@@ -93,6 +109,7 @@ class TaskTest extends Unit
         $task = $this->tester->grabFixture('tasks', 'task_pending_1');
         $this->assertEquals('bayer.hudson', $task->user->username);
     }
+
 
     public function testSaveTask()
     {
@@ -107,7 +124,7 @@ class TaskTest extends Unit
 
         $service = Yii::$container->get(TaskServiceInterface::class);
         $result = $service->create($form);
-        
+
         $this->assertInstanceOf(Task::class, $result);
         $this->assertEquals($form->title, $result->title);
         $this->assertEquals($form->description, $result->description);
