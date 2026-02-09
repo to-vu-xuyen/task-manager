@@ -119,12 +119,7 @@ class TaskService implements TaskServiceInterface
      */
     public function changeStatus(int $taskId, string $newStatus): bool
     {
-        $allowedStatuses = [
-            Task::STATUS_PENDING,
-            Task::STATUS_ACTIVE,
-            Task::STATUS_IN_PROGRESS,
-            Task::STATUS_COMPLETED,
-        ];
+        $allowedStatuses = Task::getStatusList();
         
         if (!in_array($newStatus, $allowedStatuses)) {
             return false;

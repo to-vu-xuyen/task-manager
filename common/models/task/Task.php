@@ -55,18 +55,7 @@ class Task extends \yii\db\ActiveRecord {
             [['content'], 'string'],
             [['due_at', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['title', 'description'], 'string', 'max' => 255],
-            [['status'], 'in', 'range' => [
-                self::STATUS_PENDING,
-                self::STATUS_ACTIVE,
-                self::STATUS_IN_PROGRESS,
-                self::STATUS_COMPLETED,
-                self::STATUS_ARCHIVED,
-                self::STATUS_DELETED,
-                self::STATUS_DRAFT,
-                // self::STATUS_PUBLIC,
-                // self::STATUS_PRIVATE,
-                self::STATUS_CANCELLED,
-            ]],
+            [['status'], 'in', 'range' => self::getStatusList()],
             [['assignee_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['assignee_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -127,5 +116,18 @@ class Task extends \yii\db\ActiveRecord {
 
     public function isCompleted(): bool{
         return $this->status === self::STATUS_COMPLETED;
+    }
+
+    public static function getStatusList(): array{
+        return [
+            self::STATUS_PENDING => Yii::t('app', 'Pending'),
+            self::STATUS_ACTIVE => Yii::t('app', 'Active'),
+            self::STATUS_IN_PROGRESS => Yii::t('app', 'In Progress'),
+            self::STATUS_COMPLETED => Yii::t('app', 'Completed'),
+            self::STATUS_ARCHIVED => Yii::t('app', 'Archived'),
+            self::STATUS_DELETED => Yii::t('app', 'Deleted'),
+            self::STATUS_DRAFT => Yii::t('app', 'Draft'),
+            self::STATUS_CANCELLED => Yii::t('app', 'Cancelled'),
+        ];
     }
 }

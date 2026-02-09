@@ -25,6 +25,59 @@ class TaskTest extends Unit
         ];
     }
 
+    public function testValidationTitleMaxLength()
+    {
+        $task = new Task();
+        $task->title = str_repeat('a', 256);
+        $this->assertFalse($task->validate());
+        $this->assertArrayHasKey('title', $task->getErrors());
+    }
+
+    public function testValidationDescriptionMaxLength()
+    {
+        $task = new Task();
+        $task->description = str_repeat('a', 256);
+        $this->assertFalse($task->validate());
+        $this->assertArrayHasKey('description', $task->getErrors());
+    }
+
+    public function testValidationContentMaxLength()
+    {
+        $task = new Task();
+        $task->content = str_repeat('a', 256);
+        $this->assertFalse($task->validate());
+        $this->assertArrayHasKey('content', $task->getErrors());
+    }
+
+    public function testStatusDefault()
+    {
+        $task = new Task();
+        $this->assertEquals(Task::STATUS_PENDING, $task->status);
+    }
+
+    public function testValidationStatusInRange()
+    {
+        $task = new Task();
+        $task->status = 'invalid_status';
+        $this->assertFalse($task->validate());
+        $this->assertArrayHasKey('status', $task->getErrors());
+    }
+
+    public function testStatusValid(){
+        $task = new Task();
+        $task->title = 'Test Task';
+        $task->user_id = 1;
+        $task->status = Task::STATUS_ACTIVE;
+        $this->assertTrue($task->validate(['status']));
+    }
+
+    public function testAssigneeRelation()
+    {
+        $task = $this->tester->grabFixture('tasks', 'task_pending_1');
+        $this->assertEquals('bayer.hudson', $task->assignee->username);
+        $this->assertTrue($task->assignee == null || $task->assignee instanceof User );
+    }
+
     public function testIsOverDue()
     {
         $taskOverDue = $this->tester->grabFixture('tasks', 'task_overdue_1');
@@ -50,14 +103,6 @@ class TaskTest extends Unit
         $this->assertFalse($taskCompleted->isOverdue());
     }
 
-    public function testValidationStatusInRange()
-    {
-        // Work in progress
-        $task = new Task();
-        $task->status = 4;
-        $this->assertFalse($task->validate());
-        $this->assertArrayHasKey('status', $task->getErrors());
-    }
 
     public function testIsCompleted()
     {
