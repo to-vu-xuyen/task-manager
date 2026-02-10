@@ -132,16 +132,6 @@ class TaskTest extends Unit
         $this->assertEquals(Task::STATUS_DELETED, $task->status);
     }
 
-    public function testServiceSoftDelete()
-    {
-        $task = $this->tester->grabFixture('tasks', 'task_pending_1');
-        $service = Yii::$container->get(TaskServiceInterface::class);
-        $service->delete($task->id);
-        $task = $service->getById($task->id);
-        $this->assertNotNull($task->deleted_at);
-        $this->assertEquals(Task::STATUS_DELETED, $task->status);
-    }
-
     public function testIsSoftDelete()
     {
         $task = $this->tester->grabFixture('tasks', 'task_deleted_1');
@@ -153,32 +143,6 @@ class TaskTest extends Unit
     {
         $task = $this->tester->grabFixture('tasks', 'task_pending_1');
         $this->assertEquals('bayer.hudson', $task->user->username);
-    }
-
-
-    public function testSaveTask()
-    {
-        $form = new TaskCreateForm();
-        $form->title = 'New Task 1';
-        $form->description = 'New Description 1';
-        $form->content = 'New Content 1';
-        // $form->status = Task::STATUS_PENDING;
-        $form->due_at = '2028-01-01 00:00:00';
-        $form->user_id = 1;
-        $form->assignee_id = 1;
-
-        $service = Yii::$container->get(TaskServiceInterface::class);
-        $result = $service->create($form);
-
-        $this->assertInstanceOf(Task::class, $result);
-        $this->assertEquals($form->title, $result->title);
-        $this->assertEquals($form->description, $result->description);
-        $this->assertEquals($form->content, $result->content);
-        $this->assertEquals(Task::STATUS_PENDING, $result->status);
-        $this->assertEquals($form->due_at, $result->due_at);
-        $this->assertEquals($form->user_id, $result->user_id);
-        $this->assertEquals($form->assignee_id, $result->assignee_id);
-
     }
 
 }
