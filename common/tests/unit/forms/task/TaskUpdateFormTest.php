@@ -6,7 +6,7 @@ use Codeception\Test\Unit;
 use common\forms\task\TaskUpdateForm;
 use common\models\task\Task;
 use common\fixtures\task\TaskFixture;
-use common\fixtures\user\UserFixture;
+use common\fixtures\UserFixture;
 
 class TaskUpdateFormTest extends Unit
 {

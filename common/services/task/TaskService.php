@@ -66,6 +66,7 @@ class TaskService implements TaskServiceInterface
         $task->assignee_id = $form->assignee_id;
         $task->due_at = $form->due_at;
         $task->updated_at = date('Y-m-d H:i:s');
+        $task->status = $form->status;
         
         $this->repository->save($task);
         

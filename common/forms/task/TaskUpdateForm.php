@@ -31,12 +31,7 @@ class TaskUpdateForm extends Model
             [['description'], 'string', 'max' => 255],
             [['content'], 'string'],
             [['due_at'], 'datetime', 'format' => 'php:Y-m-d H:i:s'],
-            [['status'], 'in', 'range' => [
-                Task::STATUS_PENDING,
-                Task::STATUS_ACTIVE,
-                Task::STATUS_IN_PROGRESS,
-                Task::STATUS_COMPLETED,
-            ]],
+            [['status'], 'in', 'range' => Task::getStatusList()],
             [['assignee_id'], 'exist', 'skipOnEmpty' => true, 'targetClass' => User::class, 'targetAttribute' => ['assignee_id' => 'id']],
             [['user_id'], 'exist', 'skipOnEmpty' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];

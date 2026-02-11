@@ -5,7 +5,7 @@ namespace common\tests\unit\forms\task;
 use Codeception\Test\Unit;
 use common\forms\task\TaskCreateForm;
 use common\fixtures\task\TaskFixture;
-use common\fixtures\user\UserFixture;
+use common\fixtures\UserFixture;
 
 class TaskCreateFormTest extends Unit
 {

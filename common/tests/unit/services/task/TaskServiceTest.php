@@ -11,6 +11,7 @@ use common\models\task\Task;
 use common\dto\task\TaskDto;
 use common\services\task\TaskServiceInterface;
 use common\forms\task\TaskCreateForm;
+use common\forms\task\TaskUpdateForm;
 
 
 class TaskServiceTest extends Unit
