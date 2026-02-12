@@ -158,7 +158,8 @@ class TaskRepository implements TaskRepositoryInterface
             $transaction->commit();
         } catch (\Throwable $e) {
             $transaction->rollBack();
-            throw $e;
+            // throw $e;
+            throw new \RuntimeException($e->getMessage());
         }
     }
     

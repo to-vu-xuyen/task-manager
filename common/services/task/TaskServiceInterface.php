@@ -39,7 +39,7 @@ interface TaskServiceInterface
     /**
      * Lấy tasks được assign cho user
      */
-    public function getByAssignee(int $assigneeId): array;
+    public function getByAssigneeId(int $assigneeId): array;
     
     /**
      * Đổi status của task

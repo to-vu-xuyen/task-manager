@@ -54,7 +54,9 @@ class TaskService implements TaskServiceInterface
      */
     public function update(int $taskId, TaskUpdateForm $form): ?Task
     {
+        
         if (!$form->validate()) {
+            // codecept_debug($form);
             return null;
         }
         
@@ -67,6 +69,8 @@ class TaskService implements TaskServiceInterface
         $task->due_at = $form->due_at;
         $task->updated_at = date('Y-m-d H:i:s');
         $task->status = $form->status;
+        // codecept_debug($form);
+        // codecept_debug($task);
         
         $this->repository->save($task);
         
@@ -110,7 +114,7 @@ class TaskService implements TaskServiceInterface
     /**
      * Lấy tasks được assign cho user
      */
-    public function getByAssignee(int $assigneeId): array
+    public function getByAssigneeId(int $assigneeId): array
     {
         return $this->repository->findByAssigneeId($assigneeId);
     }

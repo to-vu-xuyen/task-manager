@@ -31,7 +31,7 @@ class TaskUpdateForm extends Model
             [['description'], 'string', 'max' => 255],
             [['content'], 'string'],
             [['due_at'], 'datetime', 'format' => 'php:Y-m-d H:i:s'],
-            [['status'], 'in', 'range' => Task::getStatusList()],
+            [['status'], 'in', 'range' => array_keys(Task::getStatusList())],
             [['assignee_id'], 'exist', 'skipOnEmpty' => true, 'targetClass' => User::class, 'targetAttribute' => ['assignee_id' => 'id']],
             [['user_id'], 'exist', 'skipOnEmpty' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -42,7 +42,10 @@ class TaskUpdateForm extends Model
      */
     public function loadFromTask(Task $task): void
     {
+        
         $this->title = $task->title;
+        // codecept_debug($task->title);
+        // codecept_debug($this->title);
         $this->user_id = $task->user_id;
         $this->description = $task->description;
         $this->content = $task->content;

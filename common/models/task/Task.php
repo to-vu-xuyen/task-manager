@@ -55,7 +55,7 @@ class Task extends \yii\db\ActiveRecord {
             [['content'], 'string'],
             [['due_at', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['title', 'description'], 'string', 'max' => 255],
-            [['status'], 'in', 'range' => self::getStatusList()],
+            [['status'], 'in', 'range' => array_keys(self::getStatusList())],
             [['assignee_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['assignee_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];

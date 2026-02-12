@@ -41,9 +41,11 @@ class TaskServiceTest extends Unit
     public function testUpdateTask(){
         $task = $this->tester->grabFixture('tasks', 'task_pending_1');
 
-        
         $form = new TaskUpdateForm();
+        
         $form->loadFromTask($task);
+        
+        // codecept_debug($form->title);
         
 
         $service = Yii::$container->get(TaskServiceInterface::class);
@@ -189,5 +191,6 @@ class TaskServiceTest extends Unit
         $result = $service->changeStatus($task->id, Task::STATUS_IN_PROGRESS);
         $this->assertFalse($result);
     }
+
 
 }
