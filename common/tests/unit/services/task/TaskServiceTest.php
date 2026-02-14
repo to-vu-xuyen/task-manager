@@ -70,8 +70,9 @@ class TaskServiceTest extends Unit
         $form->title = '';
         $service = Yii::$container->get(TaskServiceInterface::class);
         $result = $service->update($task->id, $form);
-
-        $this->assertFalse($result);
+        $this->assertNull($result);
+        $this->assertArrayHasKey('title', $form->getErrors());
+        // $this->assertFalse($result);
     }
 
     public function testCreateTask()
@@ -152,8 +153,10 @@ class TaskServiceTest extends Unit
         $task = $this->tester->grabFixture('tasks', 'task_pending_1');
         $service = Yii::$container->get(TaskServiceInterface::class);
         $result = $service->delete($task->id);
+        codecept_debug($result);
         $this->assertTrue($result);
         $task = $service->getById($task->id);
+        codecept_debug($task);
         $this->assertNull($task);
     }
 
@@ -188,9 +191,11 @@ class TaskServiceTest extends Unit
         $task = $this->tester->grabFixture('tasks', 'task_pending_1');
         $service = Yii::$container->get(TaskServiceInterface::class);
         $service->delete($task->id);
+        
         $result = $service->changeStatus($task->id, Task::STATUS_IN_PROGRESS);
         $this->assertFalse($result);
     }
+    
 
 
 }

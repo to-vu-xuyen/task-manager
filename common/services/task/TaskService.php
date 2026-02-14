@@ -57,6 +57,7 @@ class TaskService implements TaskServiceInterface
         
         if (!$form->validate()) {
             // codecept_debug($form);
+            // throw new \Exception("Validate failed: " . json_encode($form->getErrors()));
             return null;
         }
         
@@ -80,11 +81,19 @@ class TaskService implements TaskServiceInterface
     /**
      * Xóa task (soft delete)
      */
-    public function delete(int $taskId): bool
+    public function delete(int $taskId, int $currentUserId = null): bool
     {
+        // if(!$currentUserId) {
+        //     $currentUserId = Yii::$app->user->id;
+        // }
         try {
             $task = $this->repository->findById($taskId);
+            codecept_debug($task->deleted_at);
+            if($task->deleted_at != null) {
+                return false;
+            }
             $this->repository->delete($task);
+
             return true;
         } catch (\DomainException $e) {
             return false;
@@ -126,15 +135,19 @@ class TaskService implements TaskServiceInterface
     {
         $allowedStatuses = Task::getStatusList();
         
-        if (!in_array($newStatus, $allowedStatuses)) {
+        if (!in_array($newStatus, array_keys($allowedStatuses))) {
             return false;
         }
         
         try {
             $task = $this->repository->findById($taskId);
+            if($task->deleted_at != null) {
+                return false;
+            }
             $task->status = $newStatus;
             $task->updated_at = date('Y-m-d H:i:s');
             $this->repository->save($task);
+            
             return true;
         } catch (\Throwable $e) {
             return false;

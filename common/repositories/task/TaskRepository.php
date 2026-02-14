@@ -26,20 +26,47 @@ class TaskRepository implements TaskRepositoryInterface
     public function findById(int $id, ?int $userId = null): Task
     {
         $task = Task::find()
-            ->where(['id' => $id]);
-        if($userId) {
-            $task->andWhere(['or',
-                ['user_id' => $userId],
-                ['assignee_id' => $userId],
-            ]);
-        }
+            ->where(['id' => $id])
+            ->andWhere(['!=', 'status', Task::STATUS_DELETED]);
+        // if($userId) {
+        //     $task->andWhere(['or',
+        //         ['user_id' => $userId],
+        //         ['assignee_id' => $userId],
+        //     ]);
+        // }
         $task = $task->one();
         if (!$task) {
             throw new \DomainException("Task not found: ID = {$id}");
         }
         return $task;
     }
+
+    public function findByIdForUser(int $id, int $userId): Task
+    {
+        $task = Task::find()
+            ->where(['id' => $id])
+            ->andWhere(['!=', 'status', Task::STATUS_DELETED])
+            ->andWhere(['or',
+                ['user_id' => $userId],
+                ['assignee_id' => $userId],
+            ])
+            ->one();
+        if (!$task) {
+            throw new \DomainException("Task not found: ID = {$id}");
+        }
+        return $task;
+    }
     
+    public function findByIdWithDeleted(int $id): Task{
+        $task = Task::find()
+            ->where(['id' => $id])
+            ->one();
+        if (!$task) {
+            throw new \DomainException("Task not found: ID = {$id}");
+        }
+        return $task;
+    }
+
     /**
      * Tìm tất cả tasks của một user
      */
