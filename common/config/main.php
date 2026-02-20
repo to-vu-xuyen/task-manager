@@ -4,13 +4,13 @@ return [
         'gridview' => [
             'class' => 'kartik\grid\Module',
         ],
-        'datecontrol' =>  [
+        'datecontrol' => [
             'class' => '\kartik\datecontrol\Module'
         ]
     ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
@@ -27,7 +27,7 @@ return [
             'database' => 0,
         ],
         'db' => require __DIR__ . '/db.php',
-            
+
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -58,13 +58,13 @@ return [
         ],
     ],
 
-    
+
     'container' => [
         'definitions' => [
             \common\services\user\auth\AuthServiceInterface::class => [
                 'class' => \common\services\user\auth\AuthService::class,
             ],
-            
+
             \common\services\user\UserServiceInterface::class => [
                 'class' => \common\services\user\UserService::class,
             ],
@@ -77,7 +77,7 @@ return [
                 'class' => \common\services\task\TaskService::class,
             ],
 
-            'common\repositories\activitylog\interface\ActivityLogRepositoryInterface' => function($container) {
+            'common\repositories\activitylog\interface\ActivityLogRepositoryInterface' => function ($container) {
                 $baseRepo = new \common\repositories\activitylog\ActivityLogRepository();
                 return new \common\repositories\activitylog\CachedActivityLogRepository($baseRepo);
             },
@@ -88,6 +88,13 @@ return [
 
             // \common\repositories\task\interfaces\TaskRepositoryInterface::class => \common\repositories\task\TaskRepository::class,
             // \common\services\task\TaskServiceInterface::class => \common\services\task\TaskService::class,
+            \common\repositories\task\interfaces\TaskAttachmentRepositoryInterface::class => [
+                'class' => \common\repositories\task\TaskAttachmentRepository::class,
+            ],
+
+            \common\services\task\TaskAttachmentServiceInterface::class => [
+                'class' => \common\services\task\TaskAttachmentService::class,
+            ],
         ],
     ],
 ];

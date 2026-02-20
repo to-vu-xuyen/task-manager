@@ -14,13 +14,14 @@ use common\forms\task\TaskCreateForm;
 use common\forms\task\TaskUpdateForm;
 use common\helpers\ActivityLogger;
 
-class TaskController extends BaseController {
+class TaskController extends BaseController
+{
     private TaskRepositoryInterface $taskRepository;
     private TaskServiceInterface $taskService;
 
     public function __construct(
-        $id, 
-        $module, 
+        $id,
+        $module,
         TaskRepositoryInterface $taskRepository,
         TaskServiceInterface $taskService,
         $config = []
@@ -45,7 +46,8 @@ class TaskController extends BaseController {
         return $behaviors;
     }
 
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $param = Yii::$app->request->get();
         $dataProvider = $this->taskRepository->search($param);
 
@@ -54,18 +56,19 @@ class TaskController extends BaseController {
         ]);
     }
 
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $model = new TaskCreateForm();
         $model->user_id = Yii::$app->user->id;
 
         if ($model->load(Yii::$app->request->post())) {
             $task = $this->taskService->create($model);
-            
+
             if ($task !== null) {
                 Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
                 return $this->redirect(['view', 'id' => $task->id]);
             }
-            
+
             Yii::$app->session->setFlash('error', 'Có lỗi xảy ra khi tạo task.');
         }
 
@@ -74,7 +77,8 @@ class TaskController extends BaseController {
         ]);
     }
 
-    public function actionUpdate($id) {
+    public function actionUpdate($id)
+    {
         $task = $this->taskService->getTask($id, Yii::$app->user->id);
         if (!$task) {
             throw new NotFoundHttpException('Task not found');
@@ -86,12 +90,12 @@ class TaskController extends BaseController {
         $this->activityLogger->log(['message' => 'User update task', 'action' => 'update', 'targetType' => 'task', 'targetId' => $id]);
         if ($model->load(Yii::$app->request->post())) {
             $task = $this->taskService->update($id, $model);
-            
+
             if ($task !== null) {
                 Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
                 return $this->redirect(['view', 'id' => $task->id]);
             }
-            
+
             Yii::$app->session->setFlash('error', 'Có lỗi xảy ra khi tạo task.');
         }
         return $this->render('update', [
@@ -99,15 +103,17 @@ class TaskController extends BaseController {
         ]);
     }
 
-    public function actionDelete($id) {
+    public function actionDelete($id)
+    {
         return $this->render('delete', [
             'id' => $id,
         ]);
     }
 
-    public function actionView($id) {
+    public function actionView($id)
+    {
         $task = $this->taskService->getTask($id);
-        
+
         if ($task === null) {
             throw new NotFoundHttpException('Task không tồn tại.');
         }
