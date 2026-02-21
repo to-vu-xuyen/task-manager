@@ -8,7 +8,9 @@ interface TaskAttachmentRepositoryInterface
 {
     public function save(TaskAttachment $taskAttachment): void;
 
-    public function delete(int $taskId): bool;
+    public function delete(TaskAttachment $taskAttachment): bool;
+
+    public function deleteByTaskId(int $taskId): bool;
 
     public function getByTaskId(int $taskId): array;
 

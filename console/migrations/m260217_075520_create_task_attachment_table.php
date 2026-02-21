@@ -20,8 +20,8 @@ class m260217_075520_create_task_attachment_table extends Migration
             'file_path' => $this->string()->notNull(),
             'file_type' => $this->string()->notNull(),
             'file_size' => $this->integer()->notNull(),
-            'created_at' => $this->date()->notNull(),
-            'updated_at' => $this->date(),
+            'created_at' => $this->datetime()->notNull(),
+            'updated_at' => $this->datetime(),
         ]);
 
         $this->addForeignKey(

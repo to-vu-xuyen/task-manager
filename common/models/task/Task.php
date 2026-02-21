@@ -98,6 +98,11 @@ class Task extends \yii\db\ActiveRecord {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+
+    public function getAttachments(){
+        return $this->hasMany(TaskAttachment::class, ['task_id' => 'id']);
+    }
+
     /**
      * Check if task is overdue
      */

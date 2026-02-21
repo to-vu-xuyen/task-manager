@@ -79,7 +79,7 @@ class TaskController extends BaseController
 
     public function actionUpdate($id)
     {
-        $task = $this->taskService->getTask($id, Yii::$app->user->id);
+        $task = $this->taskService->findByIdForUser($id, Yii::$app->user->id);
         if (!$task) {
             throw new NotFoundHttpException('Task not found');
         }
@@ -112,7 +112,7 @@ class TaskController extends BaseController
 
     public function actionView($id)
     {
-        $task = $this->taskService->getTask($id);
+        $task = $this->taskService->findByIdForUser($id, Yii::$app->user->id);
 
         if ($task === null) {
             throw new NotFoundHttpException('Task không tồn tại.');

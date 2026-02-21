@@ -79,7 +79,7 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
     {
         $attachment = $this->repository->getById($attachmentId);
         $this->deleteFile($attachment->file_path);
-        $this->repository->delete($attachment->id);
+        $this->repository->delete($attachment);
         return true;
     }
 
@@ -89,7 +89,7 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
 
         foreach ($attachments as $attachment) {
             $this->deleteFile($attachment->file_path);
-            $this->repository->delete($attachment->id);
+            $this->repository->delete($attachment);
         }
 
         return true;

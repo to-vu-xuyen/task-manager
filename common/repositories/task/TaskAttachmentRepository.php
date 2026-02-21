@@ -28,13 +28,30 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
         }
     }
 
-    public function delete(int $taskId): bool
+    public function delete(TaskAttachment $taskAttachment): bool
     {
-        $taskAttachment = TaskAttachment::find()->where(['task_id' => $taskId])->all();
+        // $taskAttachment = TaskAttachment::find()->where(['task_id' => $taskId])->all();
         $transaction = Yii::$app->db->beginTransaction();
         try {
-            foreach ($taskAttachment as $attachment) {
-                $attachment->delete();
+            // foreach ($taskAttachment as $attachment) {
+            $taskAttachment->delete();
+            // }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw new \RuntimeException($e->getMessage());
+        }
+        return false;
+    }
+
+    public function deleteByTaskId(int $taskId): bool
+    {
+        $taskAttachments = $this->getByTaskId($taskId);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            foreach ($taskAttachments as $taskAttachment) {
+                $this->delete($taskAttachment);
             }
             $transaction->commit();
             return true;
@@ -50,8 +67,8 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
         return TaskAttachment::find()->where(['task_id' => $taskId])->all();
     }
 
-    public function getById(int $taskId): TaskAttachment
+    public function getById(int $id): TaskAttachment
     {
-        return TaskAttachment::findOne($taskId);
+        return TaskAttachment::findOne($id);
     }
 }
