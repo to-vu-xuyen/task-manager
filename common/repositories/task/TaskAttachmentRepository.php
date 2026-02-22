@@ -45,7 +45,7 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
         return false;
     }
 
-    public function deleteByTaskId(int $taskId): bool
+    public function deleteAllByTaskId(int $taskId): bool
     {
         $taskAttachments = $this->getByTaskId($taskId);
         $transaction = Yii::$app->db->beginTransaction();
@@ -64,7 +64,7 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
 
     public function getByTaskId(int $taskId): array
     {
-        return TaskAttachment::find()->where(['task_id' => $taskId])->all();
+        return TaskAttachment::find()->where(['task_id' => $taskId])->orderBy(['id' => SORT_DESC])->all();
     }
 
     public function getById(int $id): TaskAttachment

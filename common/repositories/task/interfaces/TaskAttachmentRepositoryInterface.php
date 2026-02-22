@@ -10,7 +10,7 @@ interface TaskAttachmentRepositoryInterface
 
     public function delete(TaskAttachment $taskAttachment): bool;
 
-    public function deleteByTaskId(int $taskId): bool;
+    public function deleteAllByTaskId(int $taskId): bool;
 
     public function getByTaskId(int $taskId): array;
 

@@ -61,6 +61,17 @@ use common\models\User;
         ],
     ]) ?>
 
+
+    <?php if (isset($attachmentForm)): ?>
+        <?= $form->field($attachmentForm, 'files[]')->widget(FileInput::class, [
+            'options' => ['multiple' => true],
+            'pluginOptions' => [
+                'showPreview' => false,
+                'maxFileCount' => 5,
+            ],
+        ])->label('File đính kèm') ?>
+    <?php endif; ?>
+
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
             <?= Html::submitButton(

@@ -2,6 +2,8 @@
 
 namespace common\dto\task;
 
+use common\models\task\TaskAttachment;
+
 class TaskAttachmentDto
 {
     public int $id;
