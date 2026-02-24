@@ -120,7 +120,7 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         $uploadPath = Yii::getAlias('@frontend/web') . DIRECTORY_SEPARATOR . $taskDir;
 
         if (!is_dir($uploadPath)) {
-            mkdir($uploadPath, 0777, true);
+            mkdir($uploadPath, 0755, true);
         }
         return $uploadPath;
     }

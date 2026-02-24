@@ -116,7 +116,7 @@ class TaskController extends BaseController
 
     public function actionView($id)
     {
-        $task = $this->taskService->findByIdForUser($id, Yii::$app->user->id);
+        $task = $this->taskService->getByIdForUser($id, Yii::$app->user->id);
 
         if ($task === null) {
             throw new NotFoundHttpException('Task không tồn tại.');
@@ -129,7 +129,7 @@ class TaskController extends BaseController
 
     public function actionUploadAttachment($taskId)
     {
-        $task = $this->taskService->findByIdForUser($taskId, Yii::$app->user->id);
+        $task = $this->taskService->getByIdForUser($taskId, Yii::$app->user->id);
         if (!$task) {
             throw new NotFoundHttpException('Task not found');
         }
@@ -137,7 +137,7 @@ class TaskController extends BaseController
         $model = new TaskAttachmentForm();
         $model->user_id = Yii::$app->user->id;
         $model->task_id = $taskId;
-        $model->files = UploadedFile::getInstances($task, 'files');
+        $model->files = UploadedFile::getInstances($model, 'files');
         if ($model->load(Yii::$app->request->post())) {
             $taskAttachment = $this->taskAttachmentService->upload($model);
             if ($taskAttachment !== null) {
@@ -153,7 +153,7 @@ class TaskController extends BaseController
 
     public function actionDeleteAttachment($id)
     {
-        $this->taskService->deleteAttachment($id);
+        $this->taskAttachmentService->deleteAttachment($id);
         return $this->redirect(['view', 'id' => $id]);
     }
 

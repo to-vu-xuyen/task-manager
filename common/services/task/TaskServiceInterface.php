@@ -37,6 +37,8 @@ interface TaskServiceInterface
      */
     public function getByUserId(int $userId): array;
 
+    public function getByIdForUser(int $taskId, int $userId): ?Task;
+
     /**
      * Lấy tasks được assign cho user
      */
