@@ -86,6 +86,11 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         return true;
     }
 
+    public function getById(int $attachmentId): TaskAttachment
+    {
+        return $this->repository->getById($attachmentId);
+    }
+
 
     private function createAttachmentModel(TaskAttachmentForm $form, UploadedFile $file, string $taskDir, string $uniqueName): TaskAttachment
     {

@@ -67,6 +67,7 @@ class TaskController extends BaseController
 
         if ($model->load(Yii::$app->request->post())) {
             $task = $this->taskService->create($model);
+            $this->handleAttachmentUpload($task->id);
 
             if ($task !== null) {
                 Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
@@ -78,6 +79,7 @@ class TaskController extends BaseController
 
         return $this->render('create', [
             'model' => $model,
+            'attachmentForm' => new TaskAttachmentForm(),
         ]);
     }
 
@@ -135,10 +137,11 @@ class TaskController extends BaseController
         }
 
         $model = new TaskAttachmentForm();
-        $model->user_id = Yii::$app->user->id;
-        $model->task_id = $taskId;
-        $model->files = UploadedFile::getInstances($model, 'files');
         if ($model->load(Yii::$app->request->post())) {
+            
+            $model->user_id = Yii::$app->user->id;
+            $model->task_id = $taskId;
+            $model->files = UploadedFile::getInstances($model, 'files');
             $taskAttachment = $this->taskAttachmentService->upload($model);
             if ($taskAttachment !== null) {
                 Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
@@ -161,4 +164,27 @@ class TaskController extends BaseController
     {
 
     }
+
+    private function handleAttachmentUpload(int $taskId): void
+    {
+        $model = new TaskAttachmentForm();
+        $model->user_id = Yii::$app->user->id;
+        $model->task_id = $taskId;
+        $model->files = UploadedFile::getInstances($model, 'files');
+
+
+        if (empty($attachmentForm->files)) {
+            Yii::$app->session->setFlash('success', 'Task đã được lưu thành công!');
+            return;
+        }
+
+        try {
+            $uploaded = $this->taskAttachmentService->upload($model);
+            Yii::$app->session->setFlash('success', 'Task đã được tạo thành công! Đã upload: '. count($uploaded));
+        } catch (\Throwable $th) {
+            Yii::$app->session->setFlash('error', 'Task đã lưu, nhưng upload file thất bại. Bạn có thể upload lại ở trang chi tiết.');
+        }
+    }
+
+
 }

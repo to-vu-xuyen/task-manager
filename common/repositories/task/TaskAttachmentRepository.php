@@ -68,7 +68,7 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
     public function getById(int $id): ?TaskAttachment
     {
         $attachment = TaskAttachment::findOne($id);
-        if ($attachment->deleted_at != null || empty($attachment)) {
+        if (empty($attachment)) {
             throw new \DomainException("TaskAttachment not found: ID = {$id}");
         }
         return $attachment;

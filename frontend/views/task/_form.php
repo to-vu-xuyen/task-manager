@@ -3,6 +3,7 @@
 use kartik\form\ActiveForm;
 use kartik\datecontrol\DateControl;
 use yii\helpers\Html;
+use kartik\file\FileInput;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 
