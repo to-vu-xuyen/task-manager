@@ -67,9 +67,9 @@ class TaskController extends BaseController
 
         if ($model->load(Yii::$app->request->post())) {
             $task = $this->taskService->create($model);
-            $this->handleAttachmentUpload($task->id);
 
             if ($task !== null) {
+                $this->handleAttachmentUpload($task->id);
                 Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
                 return $this->redirect(['view', 'id' => $task->id]);
             }
@@ -138,7 +138,7 @@ class TaskController extends BaseController
 
         $model = new TaskAttachmentForm();
         if ($model->load(Yii::$app->request->post())) {
-            
+
             $model->user_id = Yii::$app->user->id;
             $model->task_id = $taskId;
             $model->files = UploadedFile::getInstances($model, 'files');
@@ -173,14 +173,14 @@ class TaskController extends BaseController
         $model->files = UploadedFile::getInstances($model, 'files');
 
 
-        if (empty($attachmentForm->files)) {
+        if (empty($model->files)) {
             Yii::$app->session->setFlash('success', 'Task đã được lưu thành công!');
             return;
         }
 
         try {
             $uploaded = $this->taskAttachmentService->upload($model);
-            Yii::$app->session->setFlash('success', 'Task đã được tạo thành công! Đã upload: '. count($uploaded));
+            Yii::$app->session->setFlash('success', 'Task đã được tạo thành công! Đã upload: ' . count($uploaded));
         } catch (\Throwable $th) {
             Yii::$app->session->setFlash('error', 'Task đã lưu, nhưng upload file thất bại. Bạn có thể upload lại ở trang chi tiết.');
         }

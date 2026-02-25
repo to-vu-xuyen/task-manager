@@ -7,6 +7,7 @@ use common\models\task\TaskAttachment;
 use common\forms\task\TaskAttachmentForm;
 use common\repositories\task\interfaces\TaskAttachmentRepositoryInterface;
 use common\services\task\TaskAttachmentServiceInterface;
+use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
 
 class TaskAttachmentService implements TaskAttachmentServiceInterface
@@ -34,6 +35,11 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         foreach ($form->files as $file) {
             $uniqueName = uniqid('task_att_', true) . '.' . $file->extension;
             $fullPath = $uploadPath . DIRECTORY_SEPARATOR . $uniqueName;
+
+            if (!$this->validateFileType($file)) {
+                Yii::error('Invalid file type: ' . $file->name);
+                continue;
+            }
 
             if (!$file->saveAs($fullPath)) {
                 // throw new \RuntimeException('Cannot save file: ' . $file->name);
@@ -128,5 +134,24 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
             mkdir($uploadPath, 0755, true);
         }
         return $uploadPath;
+    }
+
+    private function validateFileType(UploadedFile $file): bool
+    {
+        $realMimeType = FileHelper::getMimeType($file->tempName);
+        // $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        // $realMimeType = $finfo->file($file->tempName);
+        $allowedMimeTypes = [
+            'image/jpeg',
+            'image/png',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        ];
+        return in_array($realMimeType, $allowedMimeTypes, true);
     }
 }
