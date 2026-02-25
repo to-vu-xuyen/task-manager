@@ -17,7 +17,7 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
                     'Attachment validation failed: ' . json_encode($taskAttachment->errors)
                 );
             }
-            if (!$taskAttachment->save()) {
+            if (!$taskAttachment->save(false)) {
                 $transaction->rollBack();
                 throw new \RuntimeException('Cannot save Task Attachments');
             }
