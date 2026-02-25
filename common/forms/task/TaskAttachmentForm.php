@@ -15,6 +15,10 @@ class TaskAttachmentForm extends Model
      */
     public $files;
 
+    public function formName(): string
+    {
+        return 'TaskAttachmentForm';
+    }
     public function rules()
     {
         return [
@@ -30,6 +34,7 @@ class TaskAttachmentForm extends Model
             ],
         ];
     }
+
 
     public function attributeLabels()
     {

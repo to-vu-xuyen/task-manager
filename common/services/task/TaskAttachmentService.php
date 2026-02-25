@@ -7,6 +7,7 @@ use common\models\task\TaskAttachment;
 use common\forms\task\TaskAttachmentForm;
 use common\repositories\task\interfaces\TaskAttachmentRepositoryInterface;
 use common\services\task\TaskAttachmentServiceInterface;
+use yii\web\UploadedFile;
 
 class TaskAttachmentService implements TaskAttachmentServiceInterface
 {
@@ -18,7 +19,7 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         $this->repository = $repository;
     }
 
-    public function upload(TaskAttachmentForm $form): ?array
+    public function upload(TaskAttachmentForm $form): array
     {
         if (!$form->validate()) {
             throw new \DomainException(
@@ -26,12 +27,8 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
             );
         }
 
-        $taskDir = self::UPLOAD_DIR . DIRECTORY_SEPARATOR . $form->task_id;
-        $uploadPath = Yii::getAlias('@frontend/web') . DIRECTORY_SEPARATOR . $taskDir;
-
-        if (!is_dir($uploadPath)) {
-            mkdir($uploadPath, 0777, true);
-        }
+        $taskDir = $this->getTaskDir($form->task_id);
+        $uploadPath = $this->getUploadDirectory($form->task_id);
 
         $attachments = [];
         foreach ($form->files as $file) {
@@ -47,13 +44,7 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
             // $transaction = Yii::$app->db->beginTransaction();
             try {
 
-                $taskAttachment = new TaskAttachment();
-                $taskAttachment->task_id = $form->task_id;
-                $taskAttachment->user_id = $form->user_id;
-                $taskAttachment->file_name = $file->name;
-                $taskAttachment->file_path = $taskDir . DIRECTORY_SEPARATOR . $uniqueName;
-                $taskAttachment->file_type = $file->type;
-                $taskAttachment->file_size = $file->size;
+                $taskAttachment = $this->createAttachmentModel($form, $file, $taskDir, $uniqueName);
 
                 $this->repository->save($taskAttachment);
                 $attachments[] = $taskAttachment;
@@ -95,11 +86,42 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         return true;
     }
 
+
+    private function createAttachmentModel(TaskAttachmentForm $form, UploadedFile $file, string $taskDir, string $uniqueName): TaskAttachment
+    {
+        $taskAttachment = new TaskAttachment();
+        $taskAttachment->task_id = $form->task_id;
+        $taskAttachment->user_id = $form->user_id;
+        $taskAttachment->file_name = $file->name;
+        $taskAttachment->file_path = $taskDir . DIRECTORY_SEPARATOR . $uniqueName;
+        $taskAttachment->file_type = $file->type;
+        $taskAttachment->file_size = $file->size;
+        return $taskAttachment;
+    }
+
     private function deleteFile(string $relativePath): void
     {
         $filePath = Yii::getAlias('@frontend/web') . DIRECTORY_SEPARATOR . $relativePath;
         if (file_exists($filePath)) {
             @unlink($filePath);
         }
+    }
+
+    private function getTaskDir(int $taskId): string
+    {
+        return self::UPLOAD_DIR . DIRECTORY_SEPARATOR . $taskId;
+    }
+
+
+
+    private function getUploadDirectory(int $taskId): string
+    {
+        $taskDir = $this->getTaskDir($taskId);
+        $uploadPath = Yii::getAlias('@frontend/web') . DIRECTORY_SEPARATOR . $taskDir;
+
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+        return $uploadPath;
     }
 }

@@ -8,6 +8,7 @@ use common\forms\task\TaskCreateForm;
 use common\forms\task\TaskUpdateForm;
 use common\repositories\task\TaskRepository;
 use common\repositories\task\interfaces\TaskRepositoryInterface;
+use yii\data\DataProviderInterface;
 
 /**
  * TaskService - Facade cho Task business operations
@@ -18,12 +19,12 @@ use common\repositories\task\interfaces\TaskRepositoryInterface;
 class TaskService implements TaskServiceInterface
 {
     private TaskRepositoryInterface $repository;
-    
+
     public function __construct(?TaskRepositoryInterface $repository = null)
     {
         $this->repository = $repository ?? new TaskRepository();
     }
-    
+
     /**
      * Tạo task mới
      */
@@ -32,7 +33,7 @@ class TaskService implements TaskServiceInterface
         if (!$form->validate()) {
             return null;
         }
-        
+
         $task = new Task();
         $task->setAttributes($form->toArray());
         // $task->user_id = $form->user_id;
@@ -43,26 +44,26 @@ class TaskService implements TaskServiceInterface
         // $task->due_at = $form->due_at;
         $task->status = Task::STATUS_PENDING;
         $task->created_at = date('Y-m-d H:i:s');
-        
+
         $this->repository->save($task);
-        
+
         return $task;
     }
-    
+
     /**
      * Cập nhật task
      */
     public function update(int $taskId, TaskUpdateForm $form): ?Task
     {
-        
+
         if (!$form->validate()) {
             // codecept_debug($form);
             // throw new \Exception("Validate failed: " . json_encode($form->getErrors()));
             return null;
         }
-        
+
         $task = $this->repository->findById($taskId);
-        
+
         $task->title = $form->title;
         $task->description = $form->description;
         $task->content = $form->content;
@@ -72,12 +73,12 @@ class TaskService implements TaskServiceInterface
         $task->status = $form->status;
         // codecept_debug($form);
         // codecept_debug($task);
-        
+
         $this->repository->save($task);
-        
+
         return $task;
     }
-    
+
     /**
      * Xóa task (soft delete)
      */
@@ -89,7 +90,7 @@ class TaskService implements TaskServiceInterface
         try {
             $task = $this->repository->findById($taskId);
             codecept_debug($task->deleted_at);
-            if($task->deleted_at != null) {
+            if ($task->deleted_at != null) {
                 return false;
             }
             $this->repository->delete($task);
@@ -99,19 +100,36 @@ class TaskService implements TaskServiceInterface
             return false;
         }
     }
-    
+
+    public function search(array $params): DataProviderInterface
+    {
+        return $this->repository->search($params);
+    }
+
     /**
      * Lấy task theo ID
      */
-    public function getById(int $taskId, ?int $userId = null): ?Task
+    public function getById(int $taskId): ?Task
     {
         try {
-            return $this->repository->findById($taskId, $userId);
+            return $this->repository->findById($taskId);
         } catch (\DomainException $e) {
             return null;
         }
     }
-    
+
+    /**
+     * Lấy task theo ID, và user id
+     */
+    public function getByIdForUser(int $taskId, int $userId): ?Task
+    {
+        try {
+            return $this->repository->findByIdForUser($taskId, $userId);
+        } catch (\DomainException $e) {
+            return null;
+        }
+    }
+
     /**
      * Lấy tất cả tasks của user (creator)
      */
@@ -119,7 +137,7 @@ class TaskService implements TaskServiceInterface
     {
         return $this->repository->findByUserId($userId);
     }
-    
+
     /**
      * Lấy tasks được assign cho user
      */
@@ -127,27 +145,27 @@ class TaskService implements TaskServiceInterface
     {
         return $this->repository->findByAssigneeId($assigneeId);
     }
-    
+
     /**
      * Đổi status của task
      */
     public function changeStatus(int $taskId, string $newStatus): bool
     {
         $allowedStatuses = Task::getStatusList();
-        
+
         if (!in_array($newStatus, array_keys($allowedStatuses))) {
             return false;
         }
-        
+
         try {
             $task = $this->repository->findById($taskId);
-            if($task->deleted_at != null) {
+            if ($task->deleted_at != null) {
                 return false;
             }
             $task->status = $newStatus;
             $task->updated_at = date('Y-m-d H:i:s');
             $this->repository->save($task);
-            
+
             return true;
         } catch (\Throwable $e) {
             return false;

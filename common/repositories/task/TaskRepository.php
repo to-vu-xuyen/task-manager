@@ -46,7 +46,8 @@ class TaskRepository implements TaskRepositoryInterface
         $task = Task::find()
             ->where(['id' => $id])
             ->andWhere(['!=', 'status', Task::STATUS_DELETED])
-            ->andWhere(['or',
+            ->andWhere([
+                'or',
                 ['user_id' => $userId],
                 ['assignee_id' => $userId],
             ])
@@ -56,8 +57,9 @@ class TaskRepository implements TaskRepositoryInterface
         }
         return $task;
     }
-    
-    public function findByIdWithDeleted(int $id): Task{
+
+    public function findByIdWithDeleted(int $id): Task
+    {
         $task = Task::find()
             ->where(['id' => $id])
             ->one();
@@ -78,7 +80,7 @@ class TaskRepository implements TaskRepositoryInterface
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
     }
-    
+
     /**
      * Tìm tất cả tasks được assign cho một user
      */
@@ -90,7 +92,7 @@ class TaskRepository implements TaskRepositoryInterface
             ->orderBy(['due_at' => SORT_ASC])
             ->all();
     }
-    
+
     /**
      * Tìm tất cả tasks đang active
      */
@@ -101,7 +103,7 @@ class TaskRepository implements TaskRepositoryInterface
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
     }
-    
+
     /**
      * Tìm các tasks quá hạn
      */
@@ -121,7 +123,7 @@ class TaskRepository implements TaskRepositoryInterface
     public function search(array $filter = [], int $pageSize = 20): DataProviderInterface
     {
         $query = Task::find();
-        
+
         $query->andFilterWhere(['id' => $filter['id'] ?? null]);
         $query->andFilterWhere(['user_id' => $filter['user_id'] ?? null]);
         $query->andFilterWhere(['assginee_id' => $filter['assginee_id'] ?? null]);
@@ -145,7 +147,7 @@ class TaskRepository implements TaskRepositoryInterface
         if (!empty($filter['due_to'])) {
             $query->andWhere(['<=', 'due_at', $filter['due_to'] . ' 23:59:59']);
         }
-        
+
         // Check ngày hết hạn so với hiện tại
         if (!empty($filter['overdue']) && $filter['overdue']) {
             $query->andWhere(['<', 'due_at', date('Y-m-d H:i:s')]);
@@ -163,7 +165,7 @@ class TaskRepository implements TaskRepositoryInterface
 
         ]);
     }
-    
+
     /**
      * Lưu task (create hoặc update)
      * 
@@ -177,11 +179,11 @@ class TaskRepository implements TaskRepositoryInterface
             if (!$task->validate()) {
                 throw new \DomainException('Task validation failed: ' . json_encode($task->errors));
             }
-            
+
             if (!$task->save(false)) {
                 throw new \RuntimeException('Cannot save Task');
             }
-            
+
             $transaction->commit();
         } catch (\Throwable $e) {
             $transaction->rollBack();
@@ -189,7 +191,7 @@ class TaskRepository implements TaskRepositoryInterface
             throw new \RuntimeException($e->getMessage());
         }
     }
-    
+
     /**
      * Xóa task (soft delete - chuyển status sang DELETED)
      */
@@ -198,13 +200,13 @@ class TaskRepository implements TaskRepositoryInterface
         if ($task->isNewRecord) {
             throw new \DomainException('Cannot delete unsaved Task');
         }
-        
+
         $transaction = Yii::$app->db->beginTransaction();
         try {
             $task->status = Task::STATUS_DELETED;
             $task->deleted_at = date('Y-m-d H:i:s');
             $task->save(false);
-            
+
             $transaction->commit();
         } catch (\Throwable $e) {
             $transaction->rollBack();

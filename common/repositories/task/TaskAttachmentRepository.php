@@ -31,27 +31,26 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
     public function delete(TaskAttachment $taskAttachment): bool
     {
         // $taskAttachment = TaskAttachment::find()->where(['task_id' => $taskId])->all();
-        $transaction = Yii::$app->db->beginTransaction();
+        // $transaction = Yii::$app->db->beginTransaction();
         try {
             // foreach ($taskAttachment as $attachment) {
             $taskAttachment->delete();
             // }
-            $transaction->commit();
+            // $transaction->commit();
             return true;
         } catch (\Exception $e) {
-            $transaction->rollBack();
+            // $transaction->rollBack();
             throw new \RuntimeException($e->getMessage());
         }
-        return false;
     }
 
-    public function deleteByTaskId(int $taskId): bool
+    public function deleteAllByTaskId(int $taskId): bool
     {
         $taskAttachments = $this->getByTaskId($taskId);
         $transaction = Yii::$app->db->beginTransaction();
         try {
             foreach ($taskAttachments as $taskAttachment) {
-                $this->delete($taskAttachment);
+                $taskAttachment->delete();
             }
             $transaction->commit();
             return true;
@@ -59,16 +58,19 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
             $transaction->rollBack();
             throw new \RuntimeException($e->getMessage());
         }
-        return false;
     }
 
     public function getByTaskId(int $taskId): array
     {
-        return TaskAttachment::find()->where(['task_id' => $taskId])->all();
+        return TaskAttachment::find()->where(['task_id' => $taskId])->orderBy(['id' => SORT_DESC])->all();
     }
 
-    public function getById(int $id): TaskAttachment
+    public function getById(int $id): ?TaskAttachment
     {
-        return TaskAttachment::findOne($id);
+        $attachment = TaskAttachment::findOne($id);
+        if ($attachment->deleted_at != null || empty($attachment)) {
+            throw new \DomainException("TaskAttachment not found: ID = {$id}");
+        }
+        return $attachment;
     }
 }
