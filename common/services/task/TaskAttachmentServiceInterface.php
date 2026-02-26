@@ -6,6 +6,8 @@ use common\forms\task\TaskAttachmentForm;
 
 interface TaskAttachmentServiceInterface
 {
+    public function getById(int $attachmentId): TaskAttachment;
+
     public function upload(TaskAttachmentForm $form): array;
 
     public function getByTaskId(int $taskId): array;

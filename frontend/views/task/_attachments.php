@@ -9,6 +9,7 @@
 use yii\helpers\Html;
 use kartik\form\ActiveForm;
 use kartik\file\FileInput;
+use common\helpers\FileStorageHelper;
 
 $iconMap = [
     'application/pdf' => 'fas fa-file-pdf text-danger',
@@ -21,16 +22,6 @@ $iconMap = [
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'fas fa-file-excel text-success',
 ];
 
-function formatFileSize(int $bytes): string
-{
-    $units = ['B', 'KB', 'MB', 'GB'];
-    $i = 0;
-    while ($bytes >= 1024 && $i < count($units) - 1) {
-        $bytes /= 1024;
-        $i++;
-    }
-    return round($bytes, 2) . ' ' . $units[$i];
-}
 ?>
 
 <div class="card mt-3">
@@ -67,7 +58,7 @@ function formatFileSize(int $bytes): string
                                         ['title' => 'Click để download']
                                     ) ?>
                                 </td>
-                                <td class="text-muted"><?= formatFileSize($att->file_size) ?></td>
+                                <td class="text-muted"><?= FileStorageHelper::formatFileSize($att->file_size) ?></td>
                                 <td class="text-muted">
                                     <?= Yii::$app->formatter->asDatetime($att->created_at, 'medium') ?>
                                 </td>
