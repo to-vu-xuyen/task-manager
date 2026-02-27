@@ -76,6 +76,7 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
     {
         $attachment = $this->repository->getById($attachmentId);
         $this->repository->delete($attachment);
+
         $this->deleteFile($attachment->file_path);
         return true;
     }
@@ -84,12 +85,20 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
     {
         $attachments = $this->repository->getByTaskId($taskId);
 
-        foreach ($attachments as $attachment) {
-            $this->deleteFile($attachment->file_path);
-            $this->repository->delete($attachment);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            foreach ($attachments as $attachment) {
+                $this->deleteFile($attachment->file_path);
+                $this->repository->delete($attachment);
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Throwable $th) {
+            $transaction->rollBack();
+            throw $th;
         }
 
-        return true;
+
     }
 
     public function getById(int $attachmentId): TaskAttachment
@@ -97,10 +106,10 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         return $this->repository->getById($attachmentId);
     }
 
-    public function getDownloadPath(int $attachmentId): string
+    public function getDownloadPath(string $relativePath): string
     {
-        $attachment = $this->repository->getById($attachmentId);
-        return Yii::getAlias('@frontend/web') . DIRECTORY_SEPARATOR . $attachment->file_path;
+        // $attachment = $this->repository->getById($attachmentId);
+        return Yii::getAlias('@frontend/web') . DIRECTORY_SEPARATOR . $relativePath;
     }
 
 
@@ -109,9 +118,9 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         $taskAttachment = new TaskAttachment();
         $taskAttachment->task_id = $form->task_id;
         $taskAttachment->user_id = $form->user_id;
-        $taskAttachment->file_name = $file->name;
+        $taskAttachment->file_name = $this->sanitizeFileName($file->name);
         $taskAttachment->file_path = $taskDir . DIRECTORY_SEPARATOR . $uniqueName;
-        $taskAttachment->file_type = $file->type;
+        $taskAttachment->file_type = FileHelper::getMimeType($file->tempName);
         $taskAttachment->file_size = $file->size;
         return $taskAttachment;
     }
@@ -129,7 +138,12 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         return self::UPLOAD_DIR . DIRECTORY_SEPARATOR . $taskId;
     }
 
-
+    private function sanitizeFileName(string $fileName): string
+    {
+        $fileName = basename($fileName);
+        $fileName = preg_replace('/[^\w\-. ]/', '_', $fileName);
+        return mb_substr($fileName, 0, 200);
+    }
 
     private function getUploadDirectory(int $taskId): string
     {

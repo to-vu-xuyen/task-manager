@@ -14,5 +14,5 @@ interface TaskAttachmentRepositoryInterface
 
     public function getByTaskId(int $taskId): array;
 
-    public function getById(int $id): ?TaskAttachment;
+    public function getById(int $id): TaskAttachment;
 }

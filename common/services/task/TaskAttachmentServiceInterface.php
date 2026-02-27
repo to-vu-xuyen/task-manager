@@ -17,5 +17,5 @@ interface TaskAttachmentServiceInterface
 
     public function deleteAllByTaskId(int $taskId): bool;
 
-    public function getDownloadPath(int $attachmentId): string;
+    public function getDownloadPath(string $relativePath): string;
 }

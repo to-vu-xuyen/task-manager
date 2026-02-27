@@ -10,7 +10,7 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
 {
     public function save(TaskAttachment $taskAttachment): void
     {
-        $transaction = Yii::$app->db->beginTransaction();
+        // $transaction = Yii::$app->db->beginTransaction();
         try {
             if (!$taskAttachment->validate()) {
                 throw new \DomainException(
@@ -18,12 +18,12 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
                 );
             }
             if (!$taskAttachment->save(false)) {
-                $transaction->rollBack();
+                // $transaction->rollBack();
                 throw new \RuntimeException('Cannot save Task Attachments');
             }
-            $transaction->commit();
+            // $transaction->commit();
         } catch (\Exception $e) {
-            $transaction->rollBack();
+            // $transaction->rollBack();
             throw new \RuntimeException($e->getMessage());
         }
     }
@@ -53,11 +53,11 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
                 $taskAttachment->delete();
             }
             $transaction->commit();
-            return true;
         } catch (\Exception $e) {
             $transaction->rollBack();
             throw new \RuntimeException($e->getMessage());
         }
+        return true;
     }
 
     public function getByTaskId(int $taskId): array
@@ -65,7 +65,7 @@ class TaskAttachmentRepository implements TaskAttachmentRepositoryInterface
         return TaskAttachment::find()->where(['task_id' => $taskId])->orderBy(['id' => SORT_DESC])->all();
     }
 
-    public function getById(int $id): ?TaskAttachment
+    public function getById(int $id): TaskAttachment
     {
         $attachment = TaskAttachment::findOne($id);
         if (empty($attachment)) {

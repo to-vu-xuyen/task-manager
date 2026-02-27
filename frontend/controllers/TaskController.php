@@ -45,6 +45,8 @@ class TaskController extends BaseController
             'class' => VerbFilter::class,
             'actions' => [
                 'delete' => ['POST'],
+                'delete-attachment' => ['POST', 'GET'],
+                'upload-attachment' => ['POST', 'GET'],
             ],
         ];
         return $behaviors;
@@ -157,15 +159,32 @@ class TaskController extends BaseController
     public function actionDeleteAttachment($id)
     {
         // Gọi AJAX tại đây
+        // $this->taskAttachmentService->deleteAttachment($id);
+        $attachment = $this->taskAttachmentService->getById($id);
+        $taskId = $attachment->task_id;
+
+        // Kiểm tra quyền sở hữu
+        $task = $this->taskService->getByIdForUser($taskId, Yii::$app->user->id);
+        if (!$task) {
+            throw new NotFoundHttpException('Task không tồn tại.');
+        }
+
         $this->taskAttachmentService->deleteAttachment($id);
-        return $this->redirect(['view', 'id' => $id]);
+        Yii::$app->session->setFlash('success', 'Đã xoá file đính kèm.');
+        return $this->redirect(['view', 'id' => $taskId]);
+        // return $this->redirect(['view', 'id' => $id]);
     }
 
     public function actionDownloadAttachment($id)
     {
-        $downloadPath = $this->taskAttachmentService->getDownloadPath($id);
+        $attachment = $this->taskAttachmentService->getById($id);
+        $downloadPath = $this->taskAttachmentService->getDownloadPath($attachment->file_path);
+        $task = $this->taskService->getByIdForUser($attachment->task_id, Yii::$app->user->id);
+        if (!$task) {
+            throw new NotFoundHttpException('Task không tồn tại.');
+        }
         if (!file_exists($downloadPath)) {
-            throw new \yii\web\NotFoundHttpException('File không tồn tại.');
+            throw new NotFoundHttpException('File không tồn tại.');
         }
         return Yii::$app->response->sendFile($downloadPath);
     }
