@@ -75,8 +75,8 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
     public function deleteAttachment(int $attachmentId): bool
     {
         $attachment = $this->repository->getById($attachmentId);
-        $this->deleteFile($attachment->file_path);
         $this->repository->delete($attachment);
+        $this->deleteFile($attachment->file_path);
         return true;
     }
 
@@ -95,6 +95,12 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
     public function getById(int $attachmentId): TaskAttachment
     {
         return $this->repository->getById($attachmentId);
+    }
+
+    public function getDownloadPath(int $attachmentId): string
+    {
+        $attachment = $this->repository->getById($attachmentId);
+        return Yii::getAlias('@frontend/web') . DIRECTORY_SEPARATOR . $attachment->file_path;
     }
 
 

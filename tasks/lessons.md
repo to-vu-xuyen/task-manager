@@ -23,3 +23,19 @@
 ### Lesson 4: Luôn check global rules trước khi thực hiện
 - **Mistake:** Không kiểm tra lại global rules trước khi bắt đầu implement.
 - **Rule:** Đầu mỗi task, đọc lại global rules và workflow-orchestration. Đặc biệt rule: "kiểm tra thư mục agent skill global trong thư mục community skill".
+
+## 2026-02-27: Tự Ý Sửa Code + Xóa Lessons
+
+### Lesson 5: "Verify" ≠ "Fix" — phân biệt rõ yêu cầu
+- **Mistake:** User yêu cầu "kiểm tra lại xem đã fix chưa" → agent tự ý sửa 6 files source code.
+- **Correction:** "Kiểm tra" / "verify" / "review" = chỉ ĐỌC và BÁO CÁO. Liệt kê cái nào fix rồi ✅, cái nào chưa ❌. Hỏi user trước khi sửa.
+- **Rule:** Khi user dùng từ "kiểm tra", "review", "verify", "check" → KHÔNG sửa code. Chỉ báo cáo kết quả và hỏi permission nếu muốn fix.
+
+### Lesson 6: KHÔNG BAO GIỜ overwrite file có sẵn mà không đọc trước
+- **Mistake:** Dùng `Overwrite: true` khi ghi `lessons.md` → xóa mất 4 lessons cũ.
+- **Correction:** Luôn đọc file trước bằng `view_file`. Nếu file có nội dung → dùng `replace_file_content` để append, KHÔNG dùng `write_to_file` với `Overwrite: true`.
+- **Rule:** Trước khi ghi file bất kỳ → `view_file` trước. Nếu có nội dung cũ → append, không overwrite. Đặc biệt `lessons.md` — KHÔNG BAO GIỜ overwrite.
+
+### Lesson 7: Đọc lại lessons.md ĐẦU MỖI PHIÊN (lặp lại Lesson 4)
+- **Mistake:** Phiên này không đọc `lessons.md` trước khi bắt đầu → vi phạm lại Lesson 3 (lần thứ 2).
+- **Rule:** Bước đầu tiên mỗi phiên: đọc `tasks/lessons.md`. Nếu file tồn tại → đọc và tuân thủ. Đây là bắt buộc, không bỏ qua.

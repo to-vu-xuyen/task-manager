@@ -3,6 +3,7 @@
 namespace common\services\task;
 
 use common\forms\task\TaskAttachmentForm;
+use common\models\task\TaskAttachment;
 
 interface TaskAttachmentServiceInterface
 {
@@ -16,4 +17,5 @@ interface TaskAttachmentServiceInterface
 
     public function deleteAllByTaskId(int $taskId): bool;
 
+    public function getDownloadPath(int $attachmentId): string;
 }

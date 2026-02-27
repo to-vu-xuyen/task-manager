@@ -156,13 +156,18 @@ class TaskController extends BaseController
 
     public function actionDeleteAttachment($id)
     {
+        // Gọi AJAX tại đây
         $this->taskAttachmentService->deleteAttachment($id);
         return $this->redirect(['view', 'id' => $id]);
     }
 
     public function actionDownloadAttachment($id)
     {
-
+        $downloadPath = $this->taskAttachmentService->getDownloadPath($id);
+        if (!file_exists($downloadPath)) {
+            throw new \yii\web\NotFoundHttpException('File không tồn tại.');
+        }
+        return Yii::$app->response->sendFile($downloadPath);
     }
 
     private function handleAttachmentUpload(int $taskId): void

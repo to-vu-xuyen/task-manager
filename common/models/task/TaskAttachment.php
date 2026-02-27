@@ -37,7 +37,8 @@ class TaskAttachment extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
-                'value' => date('Y-m-d H:i:s'),
+                // 'value' => date('Y-m-d H:i:s'),
+                'value' => new Expression('NOW()'),
             ],
         ];
     }
