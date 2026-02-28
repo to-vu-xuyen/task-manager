@@ -57,7 +57,9 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
 
 
             } catch (\Throwable $th) {
-                @unlink($fullPath);
+                if (file_exists($fullPath)) {
+                    unlink($fullPath);
+                }
                 Yii::error('Error saving file: ' . $th->getMessage());
                 // throw $th;
             }
@@ -88,8 +90,8 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
         $transaction = Yii::$app->db->beginTransaction();
         try {
             foreach ($attachments as $attachment) {
-                $this->deleteFile($attachment->file_path);
                 $this->repository->delete($attachment);
+                $this->deleteFile($attachment->file_path);
             }
             $transaction->commit();
             return true;
@@ -129,7 +131,7 @@ class TaskAttachmentService implements TaskAttachmentServiceInterface
     {
         $filePath = Yii::getAlias('@frontend/web') . DIRECTORY_SEPARATOR . $relativePath;
         if (file_exists($filePath)) {
-            @unlink($filePath);
+            unlink($filePath);
         }
     }
 

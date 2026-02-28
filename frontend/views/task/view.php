@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\helpers\Url;
 use common\models\task\Task;
 
 /**
@@ -21,6 +22,12 @@ $statusLabels = [
     Task::STATUS_CANCELLED => ['label' => 'Đã hủy', 'class' => 'badge badge-danger'],
 ];
 $status = $statusLabels[$model->status] ?? ['label' => 'Unknown', 'class' => 'badge badge-dark'];
+
+
+$deleteUrl = Url::to(['/task/delete-attachment']);
+$csrfParam = Yii::$app->request->csrfParam;
+$csrfToken = Yii::$app->request->csrfToken;
+
 ?>
 
 <div class="task-view">
@@ -77,3 +84,34 @@ $status = $statusLabels[$model->status] ?? ['label' => 'Unknown', 'class' => 'ba
     </div>
 
 </div>
+
+<?php
+$script = <<<JS
+$(document).on('click', '.delete-attachment', function(e) {
+    e.preventDefault();
+    var attachmentId = $(this).data('id');
+    var taskId = $(this).data('task-id');
+    if (!confirm('Bạn có chắc chắn muốn xoá file đính kèm này?')) {
+        return;
+    }
+    $.ajax({
+        url: '$deleteUrl',
+        type: 'POST',
+        data: {
+            id: attachmentId,
+            task_id: taskId,
+            '$csrfParam': '$csrfToken',
+        },
+        success: function(response) {
+            if (response.success) {
+                $('#attachment-' + attachmentId).remove();
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log(error);
+        },
+    });
+});
+JS;
+$this->registerJs($script);
+?>

@@ -100,11 +100,11 @@ class TaskController extends BaseController
             $task = $this->taskService->update($id, $model);
 
             if ($task !== null) {
-                Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
+                Yii::$app->session->setFlash('success', 'Task đã được cập nhật thành công!');
                 return $this->redirect(['view', 'id' => $task->id]);
             }
 
-            Yii::$app->session->setFlash('error', 'Có lỗi xảy ra khi tạo task.');
+            Yii::$app->session->setFlash('error', 'Có lỗi xảy ra khi cập nhật task.');
         }
         return $this->render('update', [
             'model' => $model,
@@ -146,10 +146,10 @@ class TaskController extends BaseController
             $model->files = UploadedFile::getInstances($model, 'files');
             $taskAttachment = $this->taskAttachmentService->upload($model);
             if ($taskAttachment !== null) {
-                Yii::$app->session->setFlash('success', 'Task đã được tạo thành công!');
+                Yii::$app->session->setFlash('success', 'Task đã được upload file thành công!');
                 return $this->redirect(['view', 'id' => $taskId]);
             }
-            Yii::$app->session->setFlash('error', 'Có lỗi xảy ra khi tạo task.');
+            Yii::$app->session->setFlash('error', 'Có lỗi xảy ra khi upload file task.');
         }
         return $this->render('upload-attachment', [
             'model' => $model,
@@ -165,13 +165,42 @@ class TaskController extends BaseController
 
         // Kiểm tra quyền sở hữu
         $task = $this->taskService->getByIdForUser($taskId, Yii::$app->user->id);
+        if (Yii::$app->request->isAjax) {              
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            if (!$task) {
+                return ['success' => false, 'message' => 'Task không tồn tại.'];
+            }
+
+            try {
+                $this->taskAttachmentService->deleteAttachment($id);
+                return [
+                    'success' => true,
+                    'message' => 'Đã xoá file đính kèm.',
+                    'attachmentId' => $id,
+                    'taskId' => $taskId,
+                ];
+            } catch (\Throwable $e) {
+                Yii::error('Lỗi xoá attachment: ' . $e->getMessage());
+                return ['success' => false, 'message' => 'Có lỗi xảy ra khi xoá file đính kèm.'];
+            }
+        }
+
         if (!$task) {
             throw new NotFoundHttpException('Task không tồn tại.');
         }
+        try {
+            $this->taskAttachmentService->deleteAttachment($id);
+            Yii::$app->session->setFlash('success', 'Đã xoá file đính kèm.');
+            return $this->redirect(['view', 'id' => $taskId]);
+        } catch (\Throwable $e) {
+            Yii::error('Lỗi xoá attachment: ' . $e->getMessage());
+            Yii::$app->session->setFlash('error', 'Có lỗi xảy ra khi xoá file đính kèm.');
+            return $this->redirect(['view', 'id' => $taskId]);
+        }
 
-        $this->taskAttachmentService->deleteAttachment($id);
-        Yii::$app->session->setFlash('success', 'Đã xoá file đính kèm.');
-        return $this->redirect(['view', 'id' => $taskId]);
+        // $this->taskAttachmentService->deleteAttachment($id);
+        // Yii::$app->session->setFlash('success', 'Đã xoá file đính kèm.');
+        // return $this->redirect(['view', 'id' => $taskId]);
         // return $this->redirect(['view', 'id' => $id]);
     }
 
@@ -204,7 +233,7 @@ class TaskController extends BaseController
 
         try {
             $uploaded = $this->taskAttachmentService->upload($model);
-            Yii::$app->session->setFlash('success', 'Task đã được tạo thành công! Đã upload: ' . count($uploaded));
+            Yii::$app->session->setFlash('success', 'Task đã lưu, đã upload: ' . count($uploaded));
         } catch (\Throwable $th) {
             Yii::$app->session->setFlash('error', 'Task đã lưu, nhưng upload file thất bại. Bạn có thể upload lại ở trang chi tiết.');
         }
