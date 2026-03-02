@@ -106,9 +106,9 @@ graph TD
 - CORS filter
 - Error handler trả JSON thay vì HTML
 
-#### [NEW] `api/Module.php`
-- Yii2 Module class cho API
-- Bootstrap CORS, rate limiter
+#### [NEW] `api/modules/v1/Module.php`
+- Yii2 sub-module class cho API v1
+- `controllerNamespace` trỏ đến `api\modules\v1\controllers`
 
 ---
 

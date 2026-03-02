@@ -51,13 +51,14 @@ abstract class BaseApiController extends Controller
         unset($behaviors['authenticator']);
 
         // ── CORS (phải trước authenticator) ──
+        // Lưu ý: Origin: '*' + Credentials: true vi phạm browser spec (RFC 6454)
+        // Browser sẽ reject response nếu cả hai cùng bật
         $behaviors['corsFilter'] = [
             'class' => Cors::class,
             'cors'  => [
-                'Origin'                        => ['*'],
+                'Origin'                        => $this->getAllowedOrigins(),
                 'Access-Control-Request-Method'  => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
                 'Access-Control-Request-Headers' => ['*'],
-                'Access-Control-Allow-Credentials' => true,
                 'Access-Control-Max-Age'         => 86400,
             ],
         ];
@@ -78,6 +79,20 @@ abstract class BaseApiController extends Controller
         ];
 
         return $behaviors;
+    }
+
+    /**
+     * Danh sách origins được phép truy cập API
+     * Override trong môi trường cụ thể nếu cần
+     */
+    protected function getAllowedOrigins(): array
+    {
+        // Production: chỉ cho phép domain cụ thể
+        // Dev: có thể thêm localhost
+        return Yii::$app->params['cors.allowedOrigins'] ?? [
+            'http://localhost',
+            'http://localhost:3000',
+        ];
     }
 
     // ── Response Helpers ──
@@ -336,7 +351,8 @@ use common\forms\task\TaskUpdateForm;
  * GET    /v1/tasks        → index (list, phân trang)
  * GET    /v1/tasks/:id    → view
  * POST   /v1/tasks        → create
- * PUT    /v1/tasks/:id    → update
+ * PUT    /v1/tasks/:id    → update (full replace)
+ * PATCH  /v1/tasks/:id    → update (partial, cùng handler với PUT)
  * DELETE /v1/tasks/:id    → delete (soft delete)
  */
 class TaskController extends BaseApiController

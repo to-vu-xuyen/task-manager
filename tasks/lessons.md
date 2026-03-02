@@ -39,3 +39,16 @@
 ### Lesson 7: Đọc lại lessons.md ĐẦU MỖI PHIÊN (lặp lại Lesson 4)
 - **Mistake:** Phiên này không đọc `lessons.md` trước khi bắt đầu → vi phạm lại Lesson 3 (lần thứ 2).
 - **Rule:** Bước đầu tiên mỗi phiên: đọc `tasks/lessons.md`. Nếu file tồn tại → đọc và tuân thủ. Đây là bắt buộc, không bỏ qua.
+
+## 2026-03-02: API Docs Audit — Inconsistency
+
+### Lesson 8: Cross-reference TẤT CẢ chỗ liên quan trước khi sửa — TOÀN BỘ PROJECT
+- **Mistake:** Trong `00-implementation-plan.md`, Component 1 ghi `api/Module.php` nhưng phần File Structure Summary và `01-setup-config.md` ghi đúng `api/modules/v1/Module.php`. Sửa cấu trúc versioning nhưng sót 1 chỗ cũ.
+- **Correction:** Khi thay đổi bất kỳ khái niệm nào (file path, class name, config key...), phải tìm TẤT CẢ chỗ nó xuất hiện trước khi sửa.
+- **Scope: TOÀN BỘ PROJECT** — không chỉ docs, mà cả source code, configs, migrations, views, tests, .env, composer.json... Bất kỳ file nào trong project đều có thể reference đến thứ đang sửa.
+- **Rule — Checklist trước khi sửa:**
+  1. **Grep/Search toàn project** (`grep_search` trên root project) cụm từ cần sửa
+  2. **Liệt kê** tất cả file + line chứa reference đó (cả source code lẫn docs)
+  3. **Sửa đồng bộ** tất cả → không sót
+  4. **Verify** bằng grep lại lần nữa sau khi sửa
+- **Áp dụng cho:** File paths, class names, namespace, config keys, URL patterns, env variables, table names, route rules — bất kỳ thứ gì xuất hiện ở nhiều nơi trong project.

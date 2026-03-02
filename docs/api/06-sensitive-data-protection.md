@@ -28,11 +28,17 @@ use RuntimeException;
 final class DataEncryptor
 {
     /**
+     * Prefix marker cho encrypted data — dùng để phát hiện data đã encrypt
+     * Tránh double-encrypt và false positive detection
+     */
+    public const ENCRYPTED_PREFIX = 'enc:';
+
+    /**
      * Mã hóa data
      *
      * @param string $plainText   Data cần mã hóa
      * @param string|null $key    Custom key (mặc định: DATA_ENCRYPTION_KEY)
-     * @return string             Base64-encoded ciphertext
+     * @return string             Prefixed base64-encoded ciphertext
      * @throws RuntimeException   Nếu key chưa cấu hình
      */
     public static function encrypt(string $plainText, ?string $key = null): string
@@ -40,20 +46,26 @@ final class DataEncryptor
         $key = $key ?? self::getKey();
         $encrypted = Yii::$app->security->encryptByKey($plainText, $key);
 
-        // Base64 encode để lưu DB (binary-safe)
-        return base64_encode($encrypted);
+        // Prefix + Base64 encode để lưu DB (binary-safe)
+        return self::ENCRYPTED_PREFIX . base64_encode($encrypted);
     }
 
     /**
      * Giải mã data
      *
-     * @param string $cipherText  Base64-encoded ciphertext
+     * @param string $cipherText  Prefixed base64-encoded ciphertext
      * @param string|null $key    Custom key (mặc định: DATA_ENCRYPTION_KEY)
      * @return string|null        Plaintext, hoặc null nếu tampered/invalid
      */
     public static function decrypt(string $cipherText, ?string $key = null): ?string
     {
         $key = $key ?? self::getKey();
+
+        // Strip prefix nếu có
+        if (str_starts_with($cipherText, self::ENCRYPTED_PREFIX)) {
+            $cipherText = substr($cipherText, strlen(self::ENCRYPTED_PREFIX));
+        }
+
         $decoded = base64_decode($cipherText, true);
 
         if ($decoded === false) {
@@ -64,6 +76,15 @@ final class DataEncryptor
 
         // decryptByKey trả false nếu MAC verification failed (bị tamper)
         return $decrypted === false ? null : $decrypted;
+    }
+
+    /**
+     * Kiểm tra xem value đã được encrypt chưa
+     * Sử dụng prefix marker — chính xác 100%, không dựa vào heuristic
+     */
+    public static function isEncrypted(string $value): bool
+    {
+        return str_starts_with($value, self::ENCRYPTED_PREFIX);
     }
 
     private static function getKey(): string
@@ -139,7 +160,7 @@ class EncryptedFieldBehavior extends Behavior
 
         foreach ($this->attributes as $attribute) {
             $value = $owner->getAttribute($attribute);
-            if ($value !== null && $value !== '' && !$this->isEncrypted($value)) {
+            if ($value !== null && $value !== '' && !DataEncryptor::isEncrypted($value)) {
                 $owner->setAttribute($attribute, DataEncryptor::encrypt($value));
             }
         }
@@ -155,27 +176,13 @@ class EncryptedFieldBehavior extends Behavior
 
         foreach ($this->attributes as $attribute) {
             $value = $owner->getAttribute($attribute);
-            if ($value !== null && $value !== '') {
+            if ($value !== null && $value !== '' && DataEncryptor::isEncrypted($value)) {
                 $decrypted = DataEncryptor::decrypt($value);
                 if ($decrypted !== null) {
                     $owner->setAttribute($attribute, $decrypted);
                 }
             }
         }
-    }
-
-    /**
-     * Kiểm tra xem value đã được encrypt chưa (tránh double encrypt)
-     * Encrypted data là base64 string, thường dài hơn plaintext
-     */
-    private function isEncrypted(string $value): bool
-    {
-        // Base64 encoded data: chỉ chứa [A-Za-z0-9+/=]
-        // Và thường dài hơn 50 chars sau encrypt
-        if (strlen($value) < 50) {
-            return false;
-        }
-        return (bool) preg_match('/^[A-Za-z0-9+\/=]+$/', $value);
     }
 }
 ```

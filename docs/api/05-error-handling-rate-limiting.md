@@ -31,13 +31,18 @@ class ApiErrorHandler extends ErrorHandler
         $response = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
 
+        // Request ID cho support/debugging correlation
+        $requestId = Yii::$app->request->getHeaders()->get('X-Request-Id')
+            ?? uniqid('req_', true);
+
         if ($exception instanceof \yii\web\HttpException) {
             $response->setStatusCode($exception->statusCode);
             $data = [
                 'success' => false,
                 'error'   => [
-                    'code'    => $exception->statusCode,
-                    'message' => $exception->getMessage(),
+                    'code'       => $exception->statusCode,
+                    'message'    => $exception->getMessage(),
+                    'request_id' => $requestId,
                 ],
             ];
         } else {
@@ -45,10 +50,11 @@ class ApiErrorHandler extends ErrorHandler
             $data = [
                 'success' => false,
                 'error'   => [
-                    'code'    => 500,
-                    'message' => YII_DEBUG
+                    'code'       => 500,
+                    'message'    => YII_DEBUG
                         ? $exception->getMessage()
                         : 'Đã xảy ra lỗi hệ thống',
+                    'request_id' => $requestId,
                 ],
             ];
         }

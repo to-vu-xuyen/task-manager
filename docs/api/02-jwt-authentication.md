@@ -90,6 +90,18 @@ final class JwtHelper
             return null;
         }
 
+        // Check issuer (prevent cross-service token reuse)
+        if (isset($payload['iss']) && $payload['iss'] !== 'task-manager') {
+            Yii::warning('JWT issuer mismatch', 'jwt');
+            return null;
+        }
+
+        // Check audience
+        if (isset($payload['aud']) && $payload['aud'] !== 'task-manager-api') {
+            Yii::warning('JWT audience mismatch', 'jwt');
+            return null;
+        }
+
         return $payload;
     }
 
@@ -116,6 +128,8 @@ final class JwtHelper
             'iat'      => time(),
             'exp'      => time() + $expire,
             'type'     => 'access',
+            'iss'      => 'task-manager',
+            'aud'      => 'task-manager-api',
         ]);
     }
 

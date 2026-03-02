@@ -88,21 +88,20 @@ return [
         ],
 
         // ── URL Rules ──
+        // Chi tiết về routing strategies: xem 08-url-routing.md
         'urlManager' => [
             'enablePrettyUrl' => true,
             'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
-                // Auth (không cần xác thực)
+                // Auth — explicit routes (custom actions, không theo CRUD)
                 'POST v1/auth/login'              => 'v1/auth/login',
                 'POST v1/auth/refresh'             => 'v1/auth/refresh',
-
-                // Auth (cần xác thực)
                 'POST v1/auth/logout'              => 'v1/auth/logout',
                 'POST v1/auth/tokens'              => 'v1/auth/create-token',
                 'DELETE v1/auth/tokens/<id:\d+>'   => 'v1/auth/revoke-token',
 
-                // Tasks REST
+                // Tasks — rest\UrlRule (chuẩn CRUD, auto-generate routes)
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => ['v1/task'],
@@ -149,6 +148,13 @@ return [
     'rateLimit' => [
         'general' => [60, 60],   // 60 requests / 60 giây
         'auth'    => [5, 60],    // 5 requests / 60 giây (login/refresh)
+    ],
+    // CORS — danh sách origins được phép
+    // Production: thay bằng domain thực tế
+    'cors.allowedOrigins' => [
+        'http://localhost',
+        'http://localhost:3000',
+        // 'https://your-production-domain.com',
     ],
 ];
 ```
