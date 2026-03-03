@@ -8,6 +8,9 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
+use common\components\jwt\JwtHelper;
+use common\components\jwt\JwtHttpBearerAuth;
+
 /**
  * User model
  *
@@ -73,7 +76,25 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        // ── JWT Authentication ──
+        if ($type === JwtHttpBearerAuth::class) {
+            $payload = JwtHelper::decode($token);
+            if ($payload === null || !isset($payload['uid'])) {
+                return null;
+            }
+            return static::findIdentity($payload['uid']);
+        }
+
+        // ── Bearer Token (API Key) Authentication ──
+        $apiToken = ApiToken::findValidToken($token);
+        if ($apiToken === null) {
+            return null;
+        }
+
+        // Cập nhật last_used_at
+        $apiToken->touch();
+
+        return static::findIdentity($apiToken->user_id);
     }
 
     /**
