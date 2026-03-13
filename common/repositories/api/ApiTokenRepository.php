@@ -37,7 +37,7 @@ class ApiTokenRepository implements ApiTokenRepositoryInterface
         return UserApiToken::find()
             ->where([
                 'token' => $token,
-                'type'  => $type,
+                'type' => $type,
             ])
             ->one();
     }
@@ -49,7 +49,7 @@ class ApiTokenRepository implements ApiTokenRepositoryInterface
     {
         $query = UserApiToken::find()
             ->where([
-                'id'      => $id,
+                'id' => $id,
                 'user_id' => $userId,
             ]);
 
@@ -73,6 +73,16 @@ class ApiTokenRepository implements ApiTokenRepositoryInterface
         }
 
         return $query->all();
+    }
+
+    public function generateToken(
+        int $userId,
+        string $type = ApiToken::TYPE_API_KEY,
+        ?string $name = null,
+        ?array $scopes = null,
+        ?int $expiresInSeconds = null
+    ): UserApiToken {
+        return UserApiToken::generateToken($userId, $type, $name, $scopes, $expiresInSeconds);
     }
 
     /**

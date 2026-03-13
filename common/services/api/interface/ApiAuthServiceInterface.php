@@ -8,14 +8,13 @@ interface ApiAuthServiceInterface
 
     public function refreshToken(string $refreshToken): ?array;
 
-    
-    public function generateToken(
+
+    public function createApiToken(
         int $userId,
-        string $type = ApiToken::TYPE_API_KEY,
-        ?string $name = null,
+        string $name,
         ?array $scopes = null,
         ?int $expiresInSeconds = null
-    ): ApiToken;
+    ): ?UserApiToken;
 
     public function validateToken(string $token): ?ApiToken;
     public function revokeApiToken(int $tokenId, int $userId): bool;
