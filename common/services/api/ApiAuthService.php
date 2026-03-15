@@ -11,8 +11,8 @@ use common\models\ApiToken;
 use common\models\user\UserApiToken;
 use common\services\api\interfaces\ApiAuthServiceInterface;
 use common\components\jwt\JwtHelper;
-use common\repositories\apitoken\ApiTokenRepository;
-use common\repositories\apitoken\interfaces\ApiTokenRepositoryInterface;
+use common\repositories\api\ApiTokenRepository;
+use common\repositories\api\interfaces\ApiTokenRepositoryInterface;
 
 class ApiAuthService implements ApiAuthServiceInterface
 {
@@ -44,7 +44,7 @@ class ApiAuthService implements ApiAuthServiceInterface
         try {
             $this->apiTokenRepository->save($refreshToken);
         } catch (\Throwable $e) {
-            Yii::error('Failed to save refresh token: ' . $e->getMessage(), 'api.auth');
+            Yii::error('Failed to save token: ' . $e->getMessage(), 'api.auth');
             return null;
         }
 
@@ -107,18 +107,45 @@ class ApiAuthService implements ApiAuthServiceInterface
         }
     }
 
-    public function validateToken(string $token): ?UserApiToken
-    {
-        return $this->apiTokenRepository->findValidToken($token);
-    }
 
     public function revokeApiToken(int $tokenId, int $userId): bool
     {
+        $token = $this->apiTokenRepository->findByIdAndUserId(
+            $tokenId,
+            $userId,
+            UserApiToken::TYPE_API_KEY
+        );
 
+        if (!$token) {
+            return false;
+        }
+
+        try {
+            $this->apiTokenRepository->delete($token);
+            return true;
+        } catch (\Throwable $e) {
+            Yii::error('Failed to revoke API token: ' . $e->getMessage(), 'api.auth');
+            return false;
+        }
     }
 
     public function logout(string $refreshToken): bool
     {
+        $tokenModel = $this->apiTokenRepository->findByTokenAndType(
+            $refreshToken,
+            UserApiToken::TYPE_REFRESH_TOKEN
+        );
 
+        if (!$tokenModel) {
+            return false;
+        }
+
+        try {
+            $this->apiTokenRepository->delete($tokenModel);
+            return true;
+        } catch (\Throwable $e) {
+            Yii::error('Failed to delete refresh token: ' . $e->getMessage(), 'api.auth');
+            return false;
+        }
     }
 }

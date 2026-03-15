@@ -1,6 +1,6 @@
 <?php
 
-namespace common\repositories\api\interface;
+namespace common\repositories\api\interfaces;
 
 use common\models\user\UserApiToken;
 
@@ -31,6 +31,14 @@ interface ApiTokenRepositoryInterface
      * Lấy tất cả tokens của user theo type
      */
     public function findAllByUserId(int $userId, ?string $type = null): array;
+
+    public function generateToken(
+        int $userId,
+        string $type = ApiToken::TYPE_API_KEY,
+        ?string $name = null,
+        ?array $scopes = null,
+        ?int $expiresInSeconds = null
+    ): UserApiToken;
 
     /**
      * Lưu token (create hoặc update)

@@ -1,6 +1,8 @@
 <?php
 
-namespace common\services\api\interface;
+namespace common\services\api\interfaces;
+
+use common\models\user\UserApiToken;
 
 interface ApiAuthServiceInterface
 {
@@ -16,7 +18,6 @@ interface ApiAuthServiceInterface
         ?int $expiresInSeconds = null
     ): ?UserApiToken;
 
-    public function validateToken(string $token): ?ApiToken;
     public function revokeApiToken(int $tokenId, int $userId): bool;
     public function logout(string $refreshToken): bool;
 }

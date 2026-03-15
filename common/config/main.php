@@ -95,6 +95,17 @@ return [
             \common\services\task\TaskAttachmentServiceInterface::class => [
                 'class' => \common\services\task\TaskAttachmentService::class,
             ],
+
+
+
+            \common\repositories\api\interfaces\ApiTokenRepositoryInterface::class => [
+                'class' => \common\repositories\api\ApiTokenRepository::class,
+            ],
+            \common\services\api\interfaces\ApiAuthServiceInterface::class => [
+                'class' => \common\services\api\ApiAuthService::class,
+            ],
+
+
         ],
     ],
 ];

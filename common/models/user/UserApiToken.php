@@ -137,11 +137,11 @@ class UserApiToken extends ActiveRecord
 
         return $model;
     }
-    
+
     private static function createSecureToken(string $type): string
     {
         $prefix = $type === self::TYPE_REFRESH_TOKEN ? 'rt_' : 'tk_';
         return $prefix . Yii::$app->security->generateRandomString(64);
     }
-    
+
 }

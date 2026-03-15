@@ -4,7 +4,7 @@ namespace common\repositories\api;
 
 use Yii;
 use common\models\user\UserApiToken;
-use common\repositories\api\interface\ApiTokenRepositoryInterface;
+use common\repositories\api\interfaces\ApiTokenRepositoryInterface;
 
 /**
  * ApiTokenRepository — SQL implementation
