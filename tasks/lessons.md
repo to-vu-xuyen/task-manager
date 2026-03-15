@@ -52,3 +52,10 @@
   3. **Sửa đồng bộ** tất cả → không sót
   4. **Verify** bằng grep lại lần nữa sau khi sửa
 - **Áp dụng cho:** File paths, class names, namespace, config keys, URL patterns, env variables, table names, route rules — bất kỳ thứ gì xuất hiện ở nhiều nơi trong project.
+
+## 2026-03-15: Direct Code Modification Policy
+
+### Lesson 9: Ghi code vào Artifact thay vì sửa trực tiếp
+- **Mistake:** Tự động ghi đè file cấu hình Docker (`backend/Dockerfile`, v.v.) khi user chưa rõ ràng cho phép.
+- **Correction:** User nhắc nhở "không được tự ý sửa, ghi tất cả code vào artifact". Phải luôn viết code ra một file Artifact độc lập (như `docker_best_practices.md`) trừ khi user ra lệnh trực tiếp "hãy sửa file này".
+- **Rule:** Nếu có nhiệm vụ Refactor/Setup lớn, HÃY ƯU TIÊN tạo một Artifact Report chứa code đề xuất, thay vì tự ý edit source code của user, trừ phi đó là task debug/sửa lỗi đã thống nhất.

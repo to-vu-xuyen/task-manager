@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+vendor/
+node_modules/
+backend/runtime/
+frontend/runtime/
+console/runtime/
+backend/web/assets/*
+!backend/web/assets/.gitignore
+frontend/web/assets/*
+!frontend/web/assets/.gitignore
+tests/_output/
